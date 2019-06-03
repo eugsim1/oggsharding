@@ -167,27 +167,27 @@ OGG_DEPLOYMENT_HOME=/u01/app/ogg/oggma_first
 #-------------------------------------------------------------------------------
 # Specify the location for OGG_ETC_HOME.
 #-------------------------------------------------------------------------------
-OGG_ETC_HOME=
+OGG_ETC_HOME=/u01/app/ogg/oggma_first/etc
 
 #-------------------------------------------------------------------------------
 # Specify the location for OGG_CONF_HOME.
 #-------------------------------------------------------------------------------
-OGG_CONF_HOME=
+OGG_CONF_HOME=/u01/app/ogg/oggma_first/conf
 
 #-------------------------------------------------------------------------------
 # Specify the location for OGG_SSL_HOME.
 #-------------------------------------------------------------------------------
-OGG_SSL_HOME=
+OGG_SSL_HOME=/u01/app/ogg/oggma_first/ssl
 
 #-------------------------------------------------------------------------------
 # Specify the location for OGG_VAR_HOME.
 #-------------------------------------------------------------------------------
-OGG_VAR_HOME=
+OGG_VAR_HOME=/u01/app/ogg/oggma_first/var
 
 #-------------------------------------------------------------------------------
 # Specify the location for OGG_DATA_HOME.
 #-------------------------------------------------------------------------------
-OGG_DATA_HOME=
+OGG_DATA_HOME=/u01/app/ogg/oggma_first/data
 
 
 ###############################################################################
@@ -415,4 +415,4 @@ OGG_SCHEMA=ggadmin
 # Specify if the deployment files should be removed from disk.
 # Specify true if the deployment files should be removed, false otherwise.
 #-------------------------------------------------------------------------------
-REMOVE_DEPLOYMENT_FROM_DISK=
+REMOVE_DEPLOYMENT_FROM_DISK=false
