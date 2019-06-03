@@ -1,0 +1,271 @@
+https://docs.oracle.com/en/database/oracle/oracle-database/18/shard/sharding-deployment.html#GUID-F99B8742-4089-4E77-87D4-4691EA932207
+
+
+    Create a database that hosts the shard catalog.
+
+    Install Oracle Database software on the shard nodes.
+
+    Install shard director (GSM) software on the shard director nodes.
+
+	
+	
+
+Specify the topology layout using the following commands.
+
+    CREATE SHARDCATALOG
+
+    ADD GSM
+
+    START GSM
+
+    ADD CREDENTIAL (if using CREATE SHARD)
+
+    ADD SHARDGROUP
+
+    ADD INVITEDNODE
+
+    CREATE SHARD (or ADD SHARD) for each shard
+
+Run DEPLOY and add the global service to access any shard in the sharded database.
+
+    DEPLOY
+
+    ADD SERVICE
+
+
+	
+	
+Oracle Sharding supports two deployment methods. The first method is with the CREATE SHARD command, where the creation of shards and the replication configuration are automatically done by the Oracle Sharding management tier. This method cannot be used in a multitenant architecture where PDBs are used as shards. 	
+
+
+
+
+Creating the Shard Catalog Database
+
+Create an Oracle Database using DBCA to host the shard catalog.
+Connect to the host where you will host the shard catalog, and verify that the expected environment variables are set to the correct values.
+
+    $ env |grep ORA
+    ORACLE_BASE=/u01/app/oracle
+    ORACLE_HOME=/u01/app/oracle/product/18.0.0/dbhome_1
+
+    Create the oradata and fast_recovery_area directories.
+
+    $ mkdir /u01/app/oracle/oradata
+    $ mkdir /u01/app/oracle/fast_recovery_area
+	
+On the shard catalog host, verify that the expected environment values are set to the correct values.
+
+$ env |grep ORA
+ORACLE_SID=shardcat
+ORACLE_BASE=/u01/app/oracle
+ORACLE_HOME=/u01/app/oracle/product/18.0.0/dbhome_1
+
+
+If the shard catalog listener is not already started, start the shard catalog listener.
+
+$ lsnrctl start
+
+
+Verify that DB_CREATE_FILE_DEST parameter is set on the shard catalog database.
+
+If the parameter is not set, then set it as shown in the following example. Note that open_links and open_links_per_instance are set to 16 for the purposes of the Oracle Sharding demo application.
+
+$ sqlplus / as sysdba
+
+SQL> alter system set db_create_file_dest='/u01/app/oracle/oradata' scope=both;
+SQL> alter system set open_links=16 scope=spfile;
+SQL> alter system set open_links_per_instance=16 scope=spfile;
+
+
+Shut down and restart the shard catalog database.
+
+SQL> shutdown immediate
+Datablase closed.
+Database dismounted.
+
+SQL> startup
+
+
+Grant roles and privileges on the shard catalog database.
+
+SQL> set echo on
+SQL> set termout on
+SQL> spool setup_grants_privs.lst
+
+
+    Unlock and set the password for the GSMCATUSER schema.
+    This schema is used by the shard director when connecting to the shard catalog database.
+
+    SQL> alter user gsmcatuser account unlock;
+    SQL> alter user gsmcatuser identified by gsmcatuser_password;
+
+    Create the administrator schema and grant privileges to it.
+    The mysdbadmin account is an account in the shard catalog database which stores information on the sharding environment. The mysdbadmin account is the database administrator schema for making administrative changes to the sharded database environment. GDSCTL connects through this user to the database when GDSCTL commands are run, and the mysdbadmin user makes the necessary changes in the database.
+
+    SQL> create user mysdbadmin identified by mysdbadmin_password;
+    SQL> grant connect, create session, gsmadmin_role to mysdbadmin;
+    SQL> grant inherit privileges on user SYS to GSMADMIN_INTERNAL;
+    SQL> spool off
+
+Connect to a shard director host and start GDSCTL.
+
+The commands in the following steps are executed from a shard director host because the GDSCTL command line interface is installed there.
+
+The following example includes a sanity check that environment variables have been set properly.
+
+$ env |grep ORA
+ORACLE_BASE=/u01/app/oracle
+ORACLE_HOME=/u01/app/oracle/product/18.0.0/gsmhome_1
+
+$ gdsctl
+
+Create the shard catalog and configure the remote scheduler agent on the shard catalog.
+In this example, the sharded database is given the name cust_sdb, and two regions are created: region1 and region2. The regions are used as local availability domains for failover of the shards from the primary to physical standby. The regions are not meant to represent geographical regions in these examples.
+
+To create shard catalog for system-managed sharding, with Oracle GoldenGate replication:
+
+GDSCTL> create shardcatalog -database
+ shard_catalog_host:port_number:shard_catalog_name  
+ -user gsm_admin/mysdbadmin_password -repl OGG -repfactor 2 -sdb cust_sdb
+ -region region1, region2 -agent_port port_num -agent_password rsa_password
+ 
+ 
+ 
+ While you are connected to the shard director host, create and start the shard director.
+
+GDSCTL> add gsm -gsm sharddirector1 -listener listener_port -pwd gsmcatuser_password
+ -catalog shard_catalog_host:1521:shardcat -region region1
+
+GDSCTL> start gsm -gsm sharddirector1
+
+Repeat steps 6 and 8 on each shard director host. Replace the shard director name and region name with appropriate values for each host.
+Using GDSCTL, set the operating system credentials.
+
+GDSCTL> add credential -credential credential_name -osaccount os_account_name
+ -ospassword os_password
+GDSCTL> exit
+
+Connect to each of the shard hosts, register remote scheduler agents on them, and create directories for oradata and fast_recovery_area on them.
+
+Note:
+This step is only required if you are using the CREATE SHARD method described in Introduction to Sharded Database Deployment. If you are using the ADD SHARD method you can skip this step. 
+
+
+Execute the following statements on each of the machines that will host a shard.
+
+Note that the os_account_name is the account used for Oracle software installation, shard_host is the host name or IP address of the machine hosting the shard, the shard_catalog_host is the host name or IP address of the shard catalog host, and port_num is the remote scheduler agent port number as specified in the -agent_port parameter for create shardcatalog in step 7 above. The remote scheduler agent prompts you for the agent registration password specified in the -agent_password parameter of create shardcatalog in step 7 above.
+
+$ ssh os_account_name@shard_host
+passwd: os_password
+
+$ schagent -start
+$ schagent -status
+$ schagent -registerdatabase shard_catalog_host port_num
+
+$ mkdir /u01/app/oracle/oradata
+$ mkdir /u01/app/oracle/fast_recovery_area
+
+
+
+8.7 Creating and Deploying a System-Managed Sharded Database
+
+The following topics describe the tasks for creating and deploying a system-managed sharded database.
+
+    Deploying a System-Managed Sharded Database
+    To deploy a system-managed sharded database you create shardgroups and shards, 
+	create and configure the databases to be used as shards, 
+	execute the DEPLOY command, and create role-based global services. 
+	
+	
+ 
+GDSCTL> add invitednode shard_host_1 
+GDSCTL> create shard -shardgroup primary_shardgroup -destination shard_host_1  -credential credential_name -sys_password sys_password
+GDSCTL> add invitednode shard_host_2
+GDSCTL> create shard -shardgroup standby_shardgroup -destination shard_host_2  -credential credential_name -sys_password sys_password
+GDSCTL> add invitednode shard_host_3 
+GDSCTL> create shard -shardgroup primary_shardgroup -destination shard_host_3  -credential credential_name -sys_password sys_password
+GDSCTL> add invitednode shard_host_4 
+
+
+create shard -shardgroup shardgroup -destination shard_host
+ -credential oracle_cred -netparam /home/oracle/netca_dbhome.rsp
+ -gg_service shard_host_1:$ADMINSRVR_PORT/$GGHOME 
+ -gg_password Welcome1
+ -dbparamfile /home/oracle/dbparams01.tmp
+ -dbtemplatefile /home/oracle/sharddb01.dbt
+ 
+ create shard -shardgroup shardgroup -destination shard_host
+ -credential oracle_cred -netparam /home/oracle/netca_dbhome.rsp
+ -gg_service shard_host_1:$ADMINSRVR_PORT/$GGHOME 
+ -gg_password ggadmin_password
+ -dbparamfile /home/oracle/dbparams01.tmp
+ -dbtemplatefile /home/oracle/sharddb01.dbt
+ 
+ create shard -shardgroup shardgroup -destination shard_host
+ -credential oracle_cred -netparam /home/oracle/netca_dbhome.rsp
+ -gg_service shard_host_1:$ADMINSRVR_PORT/$GGHOME 
+ -gg_password ggadmin_password
+ -dbparamfile /home/oracle/dbparams01.tmp
+ -dbtemplatefile /home/oracle/sharddb01.dbt
+ 
+ create shard -shardgroup shardgroup -destination shard_host
+ -credential oracle_cred -netparam /home/oracle/netca_dbhome.rsp
+ -gg_service shard_host_1:$ADMINSRVR_PORT/$GGHOME 
+ -gg_password ggadmin_password
+ -dbparamfile /home/oracle/dbparams01.tmp
+ -dbtemplatefile /home/oracle/sharddb01.dbt
+ 
+
+	
+
+
+
+
+https://docs.oracle.com/en/middleware/goldengate/core/18.1/user/working-goldengate-sharding.html#GUID-2C059382-7753-4EFA-B313-A6E0DAF7EA1C
+
+How to Configure Sharding in Oracle GoldenGate
+
+If you enable sharding, you must set up a secure deployment.
+
+Prerequisites
+
+Before you begin with the sharding setup, you must adhere to the following prerequisites:
+
+    Complete Oracle Database install for the catalog and each shard database.
+    Create ggshd_wallet directory for storing Oracle GoldenGate client certificate under $ORACLE_BASE/admin (if $ORACLE_BASE is defined) or $ORACLE_HOME/admin (when $ORACLE_HOME is defined).
+    Add one microservices deployment per host where shard catalog or shards is set up.
+
+    Generate Oracle GoldenGate MA server and client wallets and certificates.
+
+    Authorize a sharding client user identified by SSL certificate.
+
+    (Recommended) Assign only one Oracle GoldenGate deployment for each shard for High Availability and simplified patching of shards.
+	
+	
+
+Sharding Configuration in Oracle GoldenGate
+
+As a best practice, a deployment should be dedicated to each shard. This ensures high availability. For more information on the advantages of using Oracle GoldenGate sharding, see How Does Oracle GoldenGate Work for a Sharded Database.
+The following steps are required to configure sharding in cases where you add a shard from a shardcatalog or create a shard:
+
+    Add a deployment using Oracle GoldenGate Configuration Assistant (OGGCA) in secure mode
+
+From the OGG_HOME directory, run the $OGG_HOME/bin/oggca.sh program on UNIX or Linux. 
+
+In the Deployment Details step:
+
+    Enter the deployment name using these conventions:
+
+        Must begin with a letter.
+
+        Can be a standard ASCII alphanumeric string not exceeding 32 characters.
+
+        Cannot include extended ASCII characters.
+
+        Special characters that are allowed include underscore (‘_’), hyphen (‘/’), dash (‘-’), period (‘.’).
+
+        Cannot be “ServiceManager”.
+    Select Enable Sharding to use the database sharding feature in your deployment. The schema must be ggadmin.
+
+	
