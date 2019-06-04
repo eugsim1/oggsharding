@@ -1,0 +1,5 @@
+UserKnownHostsFile /dev/null
+ControlMaster auto
+ControlPath /tmp/ssh-%r@%h:%p
+StrictHostKeyChecking no
+IdentityFile ~/.ssh/priv.txt
