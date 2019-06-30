@@ -1,5 +1,5 @@
-https://docs.oracle.com/en/database/oracle/oracle-database/18/shard/sharding-deployment.html#GUID-96ABB404-844C-457E-9C10-2D5C352D3928
-https://docs.oracle.com/en/database/oracle/oracle-database/12.2/gsmug/gdsctl-reference.html#GUID-8C21C4B2-0270-4CED-8C7D-5E3574457324
+#https://docs.oracle.com/en/database/oracle/oracle-database/18/shard/sharding-deployment.html#GUID-96ABB404-844C-457E-9C10-2D5C352D3928
+#https://docs.oracle.com/en/database/oracle/oracle-database/12.2/gsmug/gdsctl-reference.html#GUID-8C21C4B2-0270-4CED-8C7D-5E3574457324
 
 serverFQDN=`hostname -f` 
 server=$(echo $serverFQDN | sed 's/\..*//')
