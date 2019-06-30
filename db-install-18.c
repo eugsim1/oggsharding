@@ -104,36 +104,15 @@ dbca -silent -createDatabase                                                   \
 	
 	
 ### configuration of the catalog
-
-
-source /home/oracle/scripts/ora18.env
-
-sqlplus sys/SysPassword1@shardcat as sysdba<<EOF
-
-
-
-
-	
-	
+## this is done with initshardcat.sql	
 #install the gds services 	
 
 
 env |grep ORA
-#### gds12.env
-export ORACLE_BASE=/u01/app/oracle
-export ORACLE_HOME=/u01/app/oracle/product/12.0.0/gsmhome_1
-#export TNS_ADMIN=$ORACLE_HOME/network/admin
-export PATH=$ORACLE_HOME/bin:$PATH
 
 #### gds18.env
 export ORACLE_BASE=/u01/app/oracle
 export ORACLE_HOME=/u01/app/oracle/product/18.0.0/gsmhome_1
-#export TNS_ADMIN=$ORACLE_HOME/network/admin
-export PATH=$ORACLE_HOME/bin:$PATH
-
-#### gds19.env
-export ORACLE_BASE=/u01/app/oracle
-export ORACLE_HOME=/u01/app/oracle/product/19.0.0/gsmhome_1
 #export TNS_ADMIN=$ORACLE_HOME/network/admin
 export PATH=$ORACLE_HOME/bin:$PATH
 
@@ -163,131 +142,3 @@ sudo  $ORACLE_HOME/root.sh
 
 ### install oggma
 
-ora.evn
-
-#export ORACLE_HOSTNAME=sharddirector
-
-
-ogg18.env
-export ORACLE_SID=shardcat
-TNS_ADMIN=${ORACLE_HOME}/network/admin
-LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${ORACLE_HOME}/lib
-export ORACLE_HOME PATH ORACLE_SID TNS_ADMIN LD_LIBRARY_PATH
-export  OGG_HOME=/u01/app/ogg/oggma
-export  OGG_BIN=/u01/app/ogg/oggbin
-export PATH=$OGG_HOME/bin:$OGG_HOME/jdk/bin:$PATH
-export JAVA_HOME=/u01/app/ogg/oggma/jdk
-OGG_ETC_HOME=/u01/app/ogg/oggma_first/etc
-OGG_VAR_HOME=/u01/app/ogg/oggma_first/var
-export OGG_HOME OGG_ETC_HOME OGG_VAR_HOME
-
-rm -rf /u01/app/ogg
-mkdir -p $OGG_HOME
-mkdir -p  $OGG_BIN
-export OGG_HOME=/u01/app/ogg
-echo $OGG_HOME
-cd $OGG_BIN
-unzip -oq /u01/stage/181000_fbo_ggs_Linux_x64_services_shiphome.zip
-cd fbo_ggs_Linux_x64_services_shiphome/Disk1
-
-./runInstaller -ignorePrereq -waitforcompletion -silent                        \
-    -responseFile /u01/app/ogg/oggbin/fbo_ggs_Linux_x64_services_shiphome/Disk1/response/oggcore.rsp               \
-    UNIX_GROUP_NAME=oinstall                                                   \
-    INVENTORY_LOCATION=${ORA_INVENTORY}                                        \
-	INSTALL_OPTION=ORA18c   SOFTWARE_LOCATION=${OGG_HOME}/oggma
-	
-
-	
-rm -rf 	$ORACLE_BASE/admin/ggshd_wallet
-mkdir -p $ORACLE_BASE/admin/ggshd_wallet
-
-
-export 	OGG_HOME=/u01/app/ogg/oggma
-export PATH=$OGG_HOME/bin:$OGG_HOME/jdk/bin:$PATH
-export JAVA_HOME=/u01/app/ogg/oggma/jdk
-OGG_ETC_HOME=/u01/app/ogg/oggma_first/etc
-OGG_VAR_HOME=/u01/app/ogg/oggma_first/var
-export OGG_HOME OGG_ETC_HOME OGG_VAR_HOME
-
-orapki wallet create -wallet $ORACLE_BASE/admin/ggshd_wallet/root_ca -pwd Welcome1  -auto_login
-orapki wallet add -wallet $ORACLE_BASE/admin/ggshd_wallet/root_ca -dn "CN=RootCA" -keysize 2048 -self_signed -validity 7300 -pwd Welcome1
-orapki wallet export -wallet $ORACLE_BASE/admin/ggshd_wallet/root_ca  -dn "CN=RootCA" -cert $ORACLE_BASE/admin/ggshd_wallet/rootCA_Cert.pem -pwd Welcome1
-
-
-orapki wallet create -wallet $ORACLE_BASE/admin/ggshd_wallet/sharddirector -auto_login -pwd Welcome1
-orapki wallet add -wallet $ORACLE_BASE/admin/ggshd_wallet/sharddirector -dn "CN=sharddirector" -keysize 2048 -pwd Welcome1
-orapki wallet export -wallet $ORACLE_BASE/admin/ggshd_wallet/sharddirector -dn "CN=sharddirector" -request $ORACLE_BASE/admin/ggshd_wallet/sharddirector_req.pem -pwd Welcome1
-
-orapki cert create -wallet $ORACLE_BASE/admin/ggshd_wallet/root_ca -request $ORACLE_BASE/admin/ggshd_wallet/sharddirector_req.pem -cert $ORACLE_BASE/admin/ggshd_wallet/sharddirector_Cert.pem -serial_num 20 -validity 365 -pwd Welcome1
-orapki wallet add -wallet $ORACLE_BASE/admin/ggshd_wallet/sharddirector -trusted_cert -cert $ORACLE_BASE/admin/ggshd_wallet/rootCA_Cert.pem -pwd Welcome1 
-orapki wallet add -wallet $ORACLE_BASE/admin/ggshd_wallet/sharddirector -user_cert -cert $ORACLE_BASE/admin/ggshd_wallet/sharddirector_Cert.pem -pwd Welcome1
-
-orapki wallet create -wallet $ORACLE_BASE/admin/ggshd_wallet/dist_client -auto_login -pwd Welcome1
-orapki wallet add -wallet $ORACLE_BASE/admin/ggshd_wallet/dist_client -dn "CN=sharddirector" -keysize 2048 -pwd Welcome1
-orapki wallet export -wallet $ORACLE_BASE/admin/ggshd_wallet/dist_client -dn "CN=sharddirector" -request $ORACLE_BASE/admin/ggshd_wallet/dist_client_req.pem -pwd Welcome1
-orapki cert create -wallet $ORACLE_BASE/admin/ggshd_wallet/root_ca -request $ORACLE_BASE/admin/ggshd_wallet/dist_client_req.pem -cert $ORACLE_BASE/admin/ggshd_wallet/dist_client_Cert.pem -serial_num 30 -validity 365 -pwd Welcome1
-orapki wallet add -wallet $ORACLE_BASE/admin/ggshd_wallet/dist_client -trusted_cert -cert $ORACLE_BASE/admin/ggshd_wallet/rootCA_Cert.pem -pwd Welcome1
-orapki wallet add -wallet $ORACLE_BASE/admin/ggshd_wallet/dist_client -user_cert -cert $ORACLE_BASE/admin/ggshd_wallet/dist_client_Cert.pem -pwd Welcome1
-
-
-
-orapki wallet create -wallet $ORACLE_BASE/admin/ggshd_wallet/shard1 -auto_login -pwd Welcome1
-orapki wallet add -wallet $ORACLE_BASE/admin/ggshd_wallet/shard1 -dn "CN=shard1" -keysize 2048 -pwd Welcome1
-orapki wallet export -wallet $ORACLE_BASE/admin/ggshd_wallet/shard1 -dn "CN=shard1" -request $ORACLE_BASE/admin/ggshd_wallet/shard1_req.pem -pwd Welcome1
-orapki cert create -wallet $ORACLE_BASE/admin/ggshd_wallet/root_ca -request $ORACLE_BASE/admin/ggshd_wallet/shard1_req.pem -cert $ORACLE_BASE/admin/ggshd_wallet/shard1_Cert.pem -serial_num 20 -validity 365 -pwd Welcome1
-orapki wallet add -wallet $ORACLE_BASE/admin/ggshd_wallet/shard1 -trusted_cert -cert $ORACLE_BASE/admin/ggshd_wallet/rootCA_Cert.pem -pwd Welcome1 
-orapki wallet add -wallet $ORACLE_BASE/admin/ggshd_wallet/shard1 -user_cert -cert $ORACLE_BASE/admin/ggshd_wallet/shard1_Cert.pem -pwd Welcome1
-
-orapki wallet create -wallet $ORACLE_BASE/admin/ggshd_wallet/dist_client -auto_login -pwd Welcome1
-orapki wallet add -wallet $ORACLE_BASE/admin/ggshd_wallet/dist_client -dn "CN=shard1" -keysize 2048 -pwd Welcome1
-orapki wallet export -wallet $ORACLE_BASE/admin/ggshd_wallet/dist_client -dn "CN=shard1" -request $ORACLE_BASE/admin/ggshd_wallet/dist_client_req.pem -pwd Welcome1
-orapki cert create -wallet $ORACLE_BASE/admin/ggshd_wallet/root_ca -request $ORACLE_BASE/admin/ggshd_wallet/dist_client_req.pem -cert $ORACLE_BASE/admin/ggshd_wallet/dist_client_Cert.pem -serial_num 30 -validity 365 -pwd Welcome1
-orapki wallet add -wallet $ORACLE_BASE/admin/ggshd_wallet/dist_client -trusted_cert -cert $ORACLE_BASE/admin/ggshd_wallet/rootCA_Cert.pem -pwd Welcome1
-orapki wallet add -wallet $ORACLE_BASE/admin/ggshd_wallet/dist_client -user_cert -cert $ORACLE_BASE/admin/ggshd_wallet/dist_client_Cert.pem -pwd Welcome1
-
-orapki wallet display -wallet $ORACLE_BASE/admin/ggshd_wallet/dist_client -pwd Welcome1
-orapki wallet display -wallet $ORACLE_BASE/admin/ggshd_wallet/sharddirector -pwd Welcome1
-
-### configure oggma
-./${OGG_HOME}/oggma/oggca.sh -silent -responseFile /home/oracle/scripts/oggca.rsp
-
-
-## configure gsm catalog services	
-
-source /home/oracle/scripts/gsm18.env
-
-#gdsctl delete catalog  -force
-gdsctl create shardcatalog -database sharddirector:1521/shardcat -user mysdbadmin/Welcome1 -sdb cust_sdb -region region1, region2 -agent_port 7777 -agent_password Welcome1 -sharding system -force
-gdsctl add gsm -gsm sharddirector1  -pwd Welcome1 -listener 1522 -catalog sharddirector:1521:shardcat -region region1 -trace_level 16
-gdsctl start gsm -gsm sharddirector1
-gdsctl add credential -credential mycredential -osaccount oracle -ospassword Toula1412#
-
-
-
-
-Specify the topology layout using the following commands.
-
-    CREATE SHARDCATALOG
-    ADD GSM
-    START GSM
-    ADD CREDENTIAL (if using CREATE SHARD)
-    ADD SHARDGROUP
-    ADD INVITEDNODE
-    CREATE SHARD (or ADD SHARD) for each shard
-
-Run DEPLOY and add the global service to access any shard in the sharded database.
-
-    DEPLOY
-    ADD SERVICE
-
-
-
-#gdsctl delete catalog  -force
-gdsctl status
-gdsctl create shardcatalog -database sharddirector:1521/shardcat -user mysdbadmin/Welcome1 -repl OGG -repfactor 2 -sdb cust_sdb -region region1, region2 -agent_port 7777 -agent_password Welcome1 -force -sharding system -force
-gdsctl add gsm -gsm sharddirector1  -pwd Welcome1 -catalog 127.0.0.1:1521:shardcat -listener  1522 -region region1
-gdsctl start gsm -gsm sharddirector1
-gdsctl add credential -credential mycredential -osaccount oracle -ospassword Toula1412#
-gdsctl add shardgroup -shardgroup shardgroup1 -region region1 -repfactor 2
-gdsctl add invitednode shard1
-gdsctl create shard -shardgroup shardgroup1 -destination shard1  -credential mycredential  -gg_service shard1:9002/oggma_first  -gg_password Welcome1  -dbtemplatefile /u01/app/oracle/product/19.0.0/dbhome_1/assistants/dbca/templates/General_Purpose.dbc
