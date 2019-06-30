@@ -31,6 +31,7 @@ mkdir -p ${ORACLE_BASE}/fast_recovery_area
 cd $ORACLE_HOME
 unzip -oq /u01/stage/LINUX.X64_180000_db_home.zip
 
+echo "install DB software in silent more"
 # Install DB software Silent mode.
 ./runInstaller -ignorePrereq -waitforcompletion -silent                        \
     -responseFile ${ORACLE_HOME}/install/response/db_install.rsp               \
@@ -53,7 +54,7 @@ unzip -oq /u01/stage/LINUX.X64_180000_db_home.zip
 sudo   /u01/app/oraInventory/orainstRoot.sh
 sudo  /u01/app/oracle/product/18.0.0/dbhome_1/root.sh	
 
-	
+echo "delete previous db if exists"
 dbca -silent -deleteDatabase -sourceDB shardcat -sysDBAUserName sys -sysDBAPassword SysPassword1
 lsnrctl stop
 mv $ORACLE_HOME/network/admin/linstener.ora /home/oracle/scripts/listener.ora-original
@@ -63,6 +64,7 @@ mv $ORACLE_HOME/networdk/admin/tnsnames.ora /home/oracle/scripts/tnsnames.ora-OR
 #lsnrctl status
 #lsnrctl start
 
+echo "install shard database"
 sudo mv /etc/oratab /etc/oratab-ORGINAL
 sudo touch /etc/oratab
 sudo chmod ugo+rw /etc/oratab
@@ -85,10 +87,11 @@ dbca -silent -createDatabase                                                   \
      -redoLogFileSize 50                                                       \
      -emConfiguration NONE                                                   \
 	 -createListener LISTENER:1521  \
-	 -customScripts init.sql \
+	 -customScripts /home/oracle/scripts/init.sql \
      -ignorePreReqs
 	
 ### install the catalog database
+echo "install catalog database"
 dbca -silent -createDatabase                                                   \
      -templateName General_Purpose.dbc                                         \
      -gdbname shardcat -sid  shardcat -responseFile NO_VALUE         \
@@ -103,7 +106,7 @@ dbca -silent -createDatabase                                                   \
      -datafileDestination "${DATA_DIR}"                                        \
      -redoLogFileSize 50                                                       \
      -emConfiguration NONE                                                     \
-     -customScripts initshardcat.sql  \
+     -customScripts /home/oracle/scripts/initshardcat.sql  \
      -ignorePreReqs	
 	
 	
