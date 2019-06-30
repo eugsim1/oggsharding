@@ -8,7 +8,8 @@ setenforce 0
 systemctl stop firewalld
 systemctl  disable firewalld
 
-
+sudo yum install -y dos2unix
+sudo yum install -y git
 sudo yum install -y oracle-database-preinstall-19c
 sudo yum groupinstall 'Server with GUI' -y
 sudo yum install tigervnc-server -y
