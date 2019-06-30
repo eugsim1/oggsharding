@@ -14,8 +14,9 @@ export ORACLE_HOME PATH ORACLE_SID TNS_ADMIN LD_LIBRARY_PATH
 export OGG_BASE=/u01/app/ogg
 export OGG_HOME=/u01/app/ogg/oggma
 export  OGG_BIN=/u01/app/ogg/oggbin
+export JAVA_HOME=$OGG_HOME/jdk
 export PATH=$OGG_HOME/bin:$OGG_HOME/jdk/bin:$PATH
-export JAVA_HOME=/u01/app/ogg/oggma/jdk
+
 OGG_ETC_HOME=/u01/app/ogg/oggma_first/etc
 OGG_VAR_HOME=/u01/app/ogg/oggma_first/var
 export OGG_HOME OGG_ETC_HOME OGG_VAR_HOME
