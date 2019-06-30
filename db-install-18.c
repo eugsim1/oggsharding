@@ -1,42 +1,23 @@
 https://docs.oracle.com/en/database/oracle/oracle-database/18/shard/sharding-deployment.html#GUID-96ABB404-844C-457E-9C10-2D5C352D3928
 https://docs.oracle.com/en/database/oracle/oracle-database/12.2/gsmug/gdsctl-reference.html#GUID-8C21C4B2-0270-4CED-8C7D-5E3574457324
 
-
-##### ora19.env sharddirector
-export ORACLE_HOSTNAME=sharddirector
-export ORACLE_BASE=/u01/app/oracle
-export ORACLE_HOME=$ORACLE_BASE/product/19.0.0/dbhome_1
-export ORA_INVENTORY=/u01/app/oraInventory
-export ORACLE_SID=shardcat
-export DATA_DIR=/u01/app/oracle/oradata
-export PATH=/usr/sbin:/usr/local/bin:$PATH
-export PATH=$ORACLE_HOME/bin:$PATH
-export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
-export CLASSPATH=$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
+serverFQDN=`hostname -f` 
+server=$(echo $serverFQDN | sed 's/\..*//')
+echo $server
 
 ##### ora18.env sharddirector
-export ORACLE_HOSTNAME=sharddirector
+export ORACLE_HOSTNAME=$server
 export ORACLE_BASE=/u01/app/oracle
 export ORACLE_HOME=$ORACLE_BASE/product/18.0.0/dbhome_1
 export ORA_INVENTORY=/u01/app/oraInventory
-export ORACLE_SID=shardcat
+##export ORACLE_SID=shardcat
 export DATA_DIR=/u01/app/oracle/oradata
 export PATH=/usr/sbin:/usr/local/bin:$PATH
 export PATH=$ORACLE_HOME/bin:$PATH
 export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
 export CLASSPATH=$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
 
-##### ora12.env sharddirector
-export ORACLE_HOSTNAME=sharddirector
-export ORACLE_BASE=/u01/app/oracle
-export ORACLE_HOME=$ORACLE_BASE/product/12.0.0/dbhome_1
-export ORA_INVENTORY=/u01/app/oraInventory
-export ORACLE_SID=shardcat
-export DATA_DIR=/u01/app/oracle/oradata
-export PATH=/usr/sbin:/usr/local/bin:$PATH
-export PATH=$ORACLE_HOME/bin:$PATH
-export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
-export CLASSPATH=$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
+
 
 
 
@@ -65,45 +46,19 @@ unzip -oq /u01/stage/LINUX.X64_180000_db_home.zip
     SECURITY_UPDATES_VIA_MYORACLESUPPORT=false                                 \
     DECLINE_SECURITY_UPDATES=true
 	
-## install oracle 12 software
-mkdir -p $ORACLE_HOME
-cd $ORACLE_HOME
-unzip -oq /u01/stage/LINUX.X64_120000_db_home.zip
-
-# Install DB software Silent mode.
-./runInstaller -ignorePrereq -waitforcompletion -silent                        \
-    -responseFile ${ORACLE_HOME}/install/response/db_install.rsp               \
-    oracle.install.option=INSTALL_DB_SWONLY                                    \
-    ORACLE_HOSTNAME=${ORACLE_HOSTNAME}                                         \
-    UNIX_GROUP_NAME=oinstall                                                   \
-    INVENTORY_LOCATION=${ORA_INVENTORY}                                        \
-    SELECTED_LANGUAGES=en,en_GB                                                \
-    ORACLE_HOME=${ORACLE_HOME}                                                 \
-    ORACLE_BASE=${ORACLE_BASE}                                                 \
-    oracle.install.db.InstallEdition=EE                                        \
-    oracle.install.db.OSDBA_GROUP=dba                                          \
-    oracle.install.db.OSBACKUPDBA_GROUP=dba                                    \
-    oracle.install.db.OSDGDBA_GROUP=dba                                        \
-    oracle.install.db.OSKMDBA_GROUP=dba                                        \
-    oracle.install.db.OSRACDBA_GROUP=dba                                       \
-    SECURITY_UPDATES_VIA_MYORACLESUPPORT=false                                 \
-    DECLINE_SECURITY_UPDATES=true	
-
-		
 sudo   /u01/app/oraInventory/orainstRoot.sh
 sudo  /u01/app/oracle/product/18.0.0/dbhome_1/root.sh	
 
 	
 ### clean previous database installations
 source /home/oracle/scripts/ora12.env
-source /home/oracle/scripts/ora18.env
-source /home/oracle/scripts/ora19.env
+
 dbca -silent -deleteDatabase -sourceDB shardcat -sysDBAUserName sys -sysDBAPassword SysPassword1
 lsnrctl stop
 mv $ORACLE_HOME/network/admin/linstener.ora /home/oracle/scripts/listener.ora-original
 mv $ORACLE_HOME/networdk/admin/tnsnames.ora /home/oracle/scripts/tnsnames.ora-ORIGINAL
 
-netca/netcaa -silent -responseFile $ORACLE_HOME/assistants/netca/netca.rsp
+netca -silent -responseFile $ORACLE_HOME/assistants/netca/netca.rsp
 lsnrctl status
 lsnrctl start
 
