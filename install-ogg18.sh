@@ -92,3 +92,13 @@ orapki wallet add -wallet $WALLET_DIR/dist_client -user_cert  -cert $WALLET_DIR/
 ### display wallet configuration
 orapki wallet display -wallet  $WALLET_DIR/dist_client -pwd Welcome1
 
+env | grep ORA
+env | grep TNS
+### create a new oggma deployement from scratch
+for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
+
+rm -rf /u01/app/ogg/oggma_deploy   /u01/app/ogg/oggma_first
+cd ${OGG_HOME}/bin
+./oggca.sh -silent -responseFile  ~/scripts/oggsharding/oggca18.rsp HOST_SERVICEMANAGER=$serverFQDN \
+SERVER_WALLET=$WALLET_DIR/$serverFQDN CLIENT_WALLET=$WALLET_DIR/dist_client \
+SHARDING_USER=CN=$serverFQDN SERVICEMANAGER_DEPLOYMENT_HOME=/u01/app/ogg/oggma_deploy OGG_DEPLOYMENT_HOME=/u01/app/ogg/oggma_first
