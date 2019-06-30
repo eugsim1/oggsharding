@@ -1,0 +1,14 @@
+alter system set db_create_file_dest='/u01/app/oracle/oradata' scope=both;
+alter system set open_links=16 scope=spfile;
+alter system set open_links_per_instance=16 scope=spfile;
+shutdown immediate;
+startup;
+set echo on;
+set termout on;
+spool setup_grants_privs.lst;
+alter user gsmcatuser account unlock;
+alter user gsmcatuser identified by Welcome1;
+create user mysdbadmin identified by Welcome1;
+grant connect, create session, gsmadmin_role to mysdbadmin;
+grant inherit privileges on user SYS to GSMADMIN_INTERNAL;
+spool off;
