@@ -59,6 +59,7 @@ mv $ORACLE_HOME/networdk/admin/tnsnames.ora /home/oracle/scripts/tnsnames.ora-OR
 #lsnrctl status
 #lsnrctl start
 
+sudo mv /etc/oratab /etc/oratab-ORGINAL
 sudo touch /etc/oratab
 sudo chmod ugo+rw /etc/oratab
 sudo chown oracle:oinstall /etc/oratab
