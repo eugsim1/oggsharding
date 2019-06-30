@@ -26,7 +26,7 @@ export CLASSPATH=$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
 rm -rf $ORACLE_HOME $DATA_DIR ${ORACLE_BASE}/fast_recovery_area
 mkdir -p $ORACLE_HOME
 mkdir -p $DATA_DIR
-mkdir -p ${ORACLE_BASE}/fast_recovery_are
+mkdir -p ${ORACLE_BASE}/fast_recovery_area
 
 cd $ORACLE_HOME
 unzip -oq /u01/stage/LINUX.X64_180000_db_home.zip
