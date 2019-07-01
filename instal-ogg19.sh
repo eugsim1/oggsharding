@@ -40,6 +40,11 @@ env | grep TNS
 ### create a new oggma deployement from scratch
 for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
 
+
+sed '/oggma/d' /u01/app/oraInventory/ContentsXML/inventory.xml > loc.xml
+mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
+cat /u01/app/oraInventory/ContentsXML/inventory.xml
+
 ### install ogg ma core software
 rm -rf $OGG_BASE
 mkdir -p $OGG_BASE
