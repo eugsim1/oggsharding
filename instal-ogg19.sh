@@ -131,7 +131,9 @@ orapki wallet display -wallet $SHARDIND_WALLET_DIR
 
 
 
-
+export OGG_BASE=/u01/app/ogg
+export OGG_HOME=/u01/app/ogg/oggma
+export OGG_BIN=/u01/app/ogg/oggbin
 rm -rf /u01/app/ogg/oggma_deploy   /u01/app/ogg/oggma_first
 cd ${OGG_HOME}/bin
 ./oggca.sh -silent -responseFile  ~/scripts/oggsharding/oggca18.rsp HOST_SERVICEMANAGER=$serverFQDN \
