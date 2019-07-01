@@ -32,6 +32,12 @@ OGG_ETC_HOME=/u01/app/ogg/oggma_first/etc
 OGG_VAR_HOME=/u01/app/ogg/oggma_first/var
 export OGG_HOME OGG_ETC_HOME OGG_VAR_HOME
 
+### kill all previous ogg sessions on this server
+env | grep ORA
+env | grep TNS
+### create a new oggma deployement from scratch
+for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
+
 ### install ogg ma core software
 rm -rf $OGG_BASE
 mkdir -p $OGG_BASE
@@ -117,10 +123,7 @@ orapki wallet display -wallet $SHARDIND_WALLET_DIR
 
 
 
-env | grep ORA
-env | grep TNS
-### create a new oggma deployement from scratch
-for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
+
 
 rm -rf /u01/app/ogg/oggma_deploy   /u01/app/ogg/oggma_first
 cd ${OGG_HOME}/bin
