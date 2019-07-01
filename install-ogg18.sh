@@ -22,6 +22,16 @@ OGG_ETC_HOME=/u01/app/ogg/oggma_first/etc
 OGG_VAR_HOME=/u01/app/ogg/oggma_first/var
 export OGG_HOME OGG_ETC_HOME OGG_VAR_HOME
 
+### kill all previous ogg sessions on this server
+env | grep ORA
+env | grep TNS
+### create a new oggma deployement from scratch
+for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
+
+sed '/oggma/d' /u01/app/oraInventory/ContentsXML/inventory.xml > loc.xml
+mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
+cat /u01/app/oraInventory/ContentsXML/inventory.xml
+
 ### install ogg ma core software
 rm -rf $OGG_BASE
 mkdir -p $OGG_BASE
@@ -107,11 +117,11 @@ orapki wallet display -wallet $SHARDIND_WALLET_DIR
 
 
 
-env | grep ORA
-env | grep TNS
-### create a new oggma deployement from scratch
-for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
 
+
+export OGG_BASE=/u01/app/ogg
+export OGG_HOME=/u01/app/ogg/oggma
+export OGG_BIN=/u01/app/ogg/oggbin
 rm -rf /u01/app/ogg/oggma_deploy   /u01/app/ogg/oggma_first
 cd ${OGG_HOME}/bin
 ./oggca.sh -silent -responseFile  ~/scripts/oggsharding/oggca18.rsp HOST_SERVICEMANAGER=$serverFQDN \
