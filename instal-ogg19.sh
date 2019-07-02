@@ -146,10 +146,7 @@ export OGG_HOME=/u01/app/ogg/oggma
 export OGG_BIN=/u01/app/ogg/oggbin
 rm -rf /u01/app/ogg/oggma_deploy   /u01/app/ogg/oggma_first
 cd ${OGG_HOME}/bin
-./oggca.sh -silent -responseFile  ~/scripts/oggsharding/oggca19.rsp HOST_SERVICEMANAGER=$serverFQDN \
-SERVER_WALLET=$WALLET_DIR/$serverFQDN CLIENT_WALLET=$WALLET_DIR/dist_client \
-SHARDING_USER=CN=$serverFQDN SERVICEMANAGER_DEPLOYMENT_HOME=/u01/app/ogg/oggma_deploy OGG_DEPLOYMENT_HOME=/u01/app/ogg/oggma_first \
-ENV_ORACLE_SID=$serverFQDN
+./oggca.sh -silent -responseFile  ~/scripts/oggsharding/oggca19.rsp
 
 
 
@@ -173,12 +170,28 @@ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
 
 
 
-
+export ORACLE_SID=$server
 
 sqlplus / as sysdba <<EOF
 drop user ggadmin cascade;
 @$OGG_HOME/lib/sql/sharding/orashard_setup.sql A $server:9000/oggma_first Welcome1 $server:1521/$server;
 EOF
 
+
+export WALLET_DIR=$ORACLE_BASE/admin/wallet_dir
+export CURL_CA_BUNDLE=$WALLET_DIR/root_ca
+export CURL_CA_BUNDLE=$WALLET_DIR/rootCA_Cert.pem
+
+curl -v -u   oggadmin:Welcome1 \
+-H "Content-Type: application/json"   \
+-H "Accept: application/json"   \
+-X GET https://$server:9000/services/v2/deployments | jq
+
+
+curl -v -u   oggadmin:Welcome1 \
+-H "Content-Type: application/json"   \
+-H "Accept: application/json"   \
+-X GET https://$server:9000/services/v2/deployments/oggma_first | jq
 #cd $OGG_HOME
+
 #adminclient connect  https://shard1.sub06291314360.oggma.oraclevcn.com:9001 DEPLOYMENT  oggma_first as oggadmin password Welcome1
