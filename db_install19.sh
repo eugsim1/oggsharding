@@ -15,11 +15,17 @@ export PATH=$ORACLE_HOME/bin:$PATH
 export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
 export CLASSPATH=$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
 
+### kill all previous ogg sessions on this server
+env | grep ORA
+env | grep TNS
+### create a new oggma deployement from scratch
+for pid in $(ps -ef | grep "oggma" | awk '{print $2}'); do kill -9 $pid; done
+
 sed '/OraDB19Home1/d' /u01/app/oraInventory/ContentsXML/inventory.xml > loc.xml
 mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
 cat /u01/app/oraInventory/ContentsXML/inventory.xml
 
-
+## remove previous entries from inventory clean install
 sed '/OraGSM19Home1/d' /u01/app/oraInventory/ContentsXML/inventory.xml > loc.xml
 mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
 cat /u01/app/oraInventory/ContentsXML/inventory.xml
