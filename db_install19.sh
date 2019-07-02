@@ -156,3 +156,35 @@ grant connect, create session, gsmadmin_role to mysdbadmin;
 grant inherit privileges on user SYS to GSMADMIN_INTERNAL;
 spool off;
 EOF
+
+
+#### install gds services
+#### gds19.env
+export ORACLE_BASE=/u01/app/oracle
+export ORACLE_HOME=/u01/app/oracle/product/19.0.0/gsmhome_1
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
+export PATH=$ORACLE_HOME/bin:$PATH
+export ORA_INVENTORY=/u01/app/oraInventory
+
+rm -rf $ORACLE_HOME
+mkdir -p $ORACLE_HOME
+cd $ORACLE_HOME
+unzip -oq /u01/stage/V982067-01.zip
+
+
+#unzip -oq /u01/stage/linuxx64_12201_gsm.zip
+mkdir -p $ORACLE_HOME/gsm
+cd $ORACLE_HOME/gsm
+
+./runInstaller -ignorePrereq -waitforcompletion -silent                        \
+    -responseFile ${ORACLE_HOME}/gsm/response/gsm_install.rsp               \
+    UNIX_GROUP_NAME=oinstall                                                   \
+    INVENTORY_LOCATION=${ORA_INVENTORY}                                        \
+    SELECTED_LANGUAGES=en,en_GB                                                \
+    ORACLE_HOME=${ORACLE_HOME}                                                 \
+    ORACLE_BASE=${ORACLE_BASE}                                                 \
+    SECURITY_UPDATES_VIA_MYORACLESUPPORT=false                                 \
+    DECLINE_SECURITY_UPDATES=true
+
+sudo  $ORACLE_HOME/root.sh
+
