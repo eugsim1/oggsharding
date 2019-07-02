@@ -73,7 +73,7 @@ sudo chown oracle:oinstall /etc/oratab
 dbca -silent -createDatabase                                                   \
      -templateName General_Purpose.dbc                                         \
      -gdbname $server -sid  $server -responseFile NO_VALUE         \
-     -characterSet AL32UTF8                  lab                                  \
+     -characterSet AL32UTF8                                                    \
      -sysPassword SysPassword1                                                 \
      -systemPassword SysPassword1                                              \
      -createAsContainerDatabase false                                           \
