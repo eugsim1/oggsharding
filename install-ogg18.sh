@@ -15,8 +15,9 @@ export ORACLE_HOME PATH ORACLE_SID TNS_ADMIN LD_LIBRARY_PATH
 export OGG_BASE=/u01/app/ogg
 export OGG_HOME=/u01/app/ogg/oggma
 export OGG_BIN=/u01/app/ogg/oggbin
-export JAVA_HOME=$OGG_HOME/jdk
-export PATH=$OGG_HOME/bin:$OGG_HOME/jdk/bin:$PATH
+export JAVA_HOME=/u01/jdk-11.0.3
+##export JAVA_HOME=$OGG_HOME/jdk
+export PATH=$JAVA_HOME/bin:$OGG_HOME/bin:$PATH
 
 OGG_ETC_HOME=/u01/app/ogg/oggma_first/etc
 OGG_VAR_HOME=/u01/app/ogg/oggma_first/var
@@ -126,8 +127,29 @@ rm -rf /u01/app/ogg/oggma_deploy   /u01/app/ogg/oggma_first
 cd ${OGG_HOME}/bin
 ./oggca.sh -silent -responseFile  ~/scripts/oggsharding/oggca18.rsp HOST_SERVICEMANAGER=$serverFQDN \
 SERVER_WALLET=$WALLET_DIR/$serverFQDN CLIENT_WALLET=$WALLET_DIR/dist_client \
+PORT_SERVICEMANAGER=9000 PORT_ADMINSRVR=9001 PORT_DISTSRVR=9002 PORT_RCVRSRVR=9003  PORT_PMSRVR=0 UDP_PORT_PMSRVR=0 \
 SHARDING_USER=CN=$serverFQDN SERVICEMANAGER_DEPLOYMENT_HOME=/u01/app/ogg/oggma_deploy OGG_DEPLOYMENT_HOME=/u01/app/ogg/oggma_first
 
 
 cd $OGG_HOME
 adminclient connect  https://shard1.sub06291314360.oggma.oraclevcn.com:9001 DEPLOYMENT  oggma_first as oggadmin password Welcome1
+
+echo "connect  https://shard1.sub06291314360.oggma.oraclevcn.com:9001 DEPLOYMENT  oggma_first as oggadmin password Welcome1"| adminclient
+
+
+export WALLET_DIR=$ORACLE_BASE/admin/wallet_dir
+export CURL_CA_BUNDLE=$WALLET_DIR/root_ca
+export CURL_CA_BUNDLE=$WALLET_DIR/rootCA_Cert.pem
+
+curl -v -u   oggadmin:Welcome1 \
+-H "Content-Type: application/json"   \
+-H "Accept: application/json"   \
+-X GET https://shard1.sub06291314360.oggma.oraclevcn.com:9001/services/v2/deployments | jq
+
+
+curl -v -u   oggadmin:Welcome1 \
+-H "Content-Type: application/json"   \
+-H "Accept: application/json"   \
+-X GET https://shard1.sub06291314360.oggma.oraclevcn.com:9001/services/v2/deployments/oggma_first | jq
+
+
