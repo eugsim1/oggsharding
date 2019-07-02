@@ -9,7 +9,7 @@ export ORACLE_BASE=/u01/app/oracle
 export ORACLE_HOME=$ORACLE_BASE/product/19.0.0/dbhome_1
 export ORA_INVENTORY=/u01/app/oraInventory
 export ORACLE_SID=$server
-export DATA_DIR=/u01/app/oracle/oradata
+export DATA_DIR=/u01/app/oracle/oradata19
 export PATH=/usr/sbin:/usr/local/bin:$PATH
 export PATH=$ORACLE_HOME/bin:$PATH
 export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
@@ -33,8 +33,10 @@ sed '/OraGSM19Home1/d' /u01/app/oraInventory/ContentsXML/inventory.xml > loc.xml
 mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
 cat /u01/app/oraInventory/ContentsXML/inventory.xml
 
-
+rm -rf $DATA_DIR
+rm -rf $ORACLE_HOME
 ## install oracle software
+mkdir -p $DATA_DIR
 mkdir -p $ORACLE_HOME
 cd $ORACLE_HOME
 unzip -oq /u01/stage/LINUX.X64_193000_db_home.zip
