@@ -177,7 +177,7 @@ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
 
 sqlplus / as sysdba <<EOF
 drop user ggadmin cascade;
-@$OGG_HOME/lib/sql/sharding/orashard_setup.sql A $server:9001/oggma_first Welcome1 $server:1521/$server;
+@$OGG_HOME/lib/sql/sharding/orashard_setup.sql A $server:9000/oggma_first Welcome1 $server:1521/$server;
 EOF
 
 #cd $OGG_HOME
