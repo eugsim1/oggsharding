@@ -117,3 +117,23 @@ select * from v\$sgainfo;
 alter system set streams_pool_size = '1200M' scope = both;
 select current_size from v\$sga_dynamic_components where component = 'streams pool';
 EOF
+
+
+#### install shardcate database
+	
+### install the catalog database
+dbca -silent -createDatabase                                                   \
+     -templateName General_Purpose.dbc                                         \
+     -gdbname shardcat -sid  shardcat -responseFile NO_VALUE         \
+     -characterSet AL32UTF8                                                    \
+     -sysPassword SysPassword1                                                 \
+     -systemPassword SysPassword1                                              \
+     -createAsContainerDatabase false                                           \
+     -databaseType MULTIPURPOSE                                                \
+     -automaticMemoryManagement false                                          \
+     -totalMemory 2000                                                         \
+     -storageType FS                                                           \
+     -datafileDestination "${DATA_DIR}"                                        \
+     -redoLogFileSize 50                                                       \
+     -emConfiguration NONE                                                     \
+     -ignorePreReqs	
