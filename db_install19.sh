@@ -44,7 +44,7 @@ rm -rf $ORACLE_HOME
 mkdir -p $DATA_DIR
 mkdir -p $ORACLE_HOME
 cd $ORACLE_HOME
-unzip -oq /u01/stage/LINUX.X64_193000_db_home.zip
+unzip -oq /u01/stage/V982063-01.zip
 
 
 
@@ -92,7 +92,7 @@ dbca -silent -createDatabase                                                   \
      -datafileDestination "${DATA_DIR}"                                        \
      -redoLogFileSize 50                                                       \
      -emConfiguration NONE                                                   \
-	 -createListener LISTENER:1521  \
-	 -customScripts init.sql \
      -ignorePreReqs
+     
+ ###    	 -customScripts init.sql \
 	 
