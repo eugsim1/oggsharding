@@ -77,6 +77,8 @@ which orapki
 serverFQDN=`hostname -f` 
 server=$(echo $serverFQDN | sed 's/\..*//')
 echo $server
+export serverFQDN=$server
+echo $serverFQDN
 
 export WALLET_DIR=$ORACLE_BASE/admin/wallet_dir
 export SHARDIND_WALLET_DIR=$ORACLE_BASE/admin/ggshd_wallet
@@ -144,10 +146,38 @@ export OGG_HOME=/u01/app/ogg/oggma
 export OGG_BIN=/u01/app/ogg/oggbin
 rm -rf /u01/app/ogg/oggma_deploy   /u01/app/ogg/oggma_first
 cd ${OGG_HOME}/bin
-./oggca.sh -silent -responseFile  ~/scripts/oggsharding/oggca18.rsp HOST_SERVICEMANAGER=$serverFQDN \
+./oggca.sh -silent -responseFile  ~/scripts/oggsharding/oggca19.rsp HOST_SERVICEMANAGER=$serverFQDN \
 SERVER_WALLET=$WALLET_DIR/$serverFQDN CLIENT_WALLET=$WALLET_DIR/dist_client \
 SHARDING_USER=CN=$serverFQDN SERVICEMANAGER_DEPLOYMENT_HOME=/u01/app/ogg/oggma_deploy OGG_DEPLOYMENT_HOME=/u01/app/ogg/oggma_first
 
 
-cd $OGG_HOME
-adminclient connect  https://shard1.sub06291314360.oggma.oraclevcn.com:9001 DEPLOYMENT  oggma_first as oggadmin password Welcome1
+
+
+export ORACLE_HOSTNAME=$server
+export ORACLE_BASE=/u01/app/oracle
+export ORACLE_SID=$server
+export ORACLE_HOME=$ORACLE_BASE/product/19.0.0/dbhome_1
+export TNS_ADMIN=${ORACLE_HOME}/network/admin
+
+export OGG_BASE=/u01/app/ogg
+export OGG_HOME=/u01/app/ogg/oggma
+export OGG_BIN=/u01/app/ogg/oggbin
+export JAVA_HOME=$OGG_HOME/jdk
+export PATH=$OGG_HOME/bin:$OGG_HOME/jdk/bin:$ORACLE_HOME/bin:$PATH
+
+export OGG_ETC_HOME=/u01/app/ogg/oggma_first/etc
+export OGG_VAR_HOME=/u01/app/ogg/oggma_first/var
+
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
+
+
+
+
+
+sqlplus / as sysdba <<EOF
+drop user ggadmin cascade;
+@$OGG_HOME/lib/sql/sharding/orashard_setup.sql A $server:9001/oggma_first Welcome1 $server:1521/$server;
+EOF
+
+#cd $OGG_HOME
+#adminclient connect  https://shard1.sub06291314360.oggma.oraclevcn.com:9001 DEPLOYMENT  oggma_first as oggadmin password Welcome1
