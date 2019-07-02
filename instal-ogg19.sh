@@ -67,7 +67,7 @@ cd fbo_ggs_Linux_x64_services_shiphome/Disk1
     -responseFile /u01/app/ogg/oggbin/fbo_ggs_Linux_x64_services_shiphome/Disk1/response/oggcore.rsp               \
     UNIX_GROUP_NAME=oinstall                                                   \
     INVENTORY_LOCATION=${ORA_INVENTORY}                                        \
-	INSTALL_OPTION=ORA18c   SOFTWARE_LOCATION=${OGG_BASE}/oggma
+	INSTALL_OPTION=ORA19c   SOFTWARE_LOCATION=${OGG_BASE}/oggma
 	
 which java
 which orapki
