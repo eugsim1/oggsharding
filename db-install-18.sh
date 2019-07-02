@@ -79,7 +79,7 @@ dbca -silent -createDatabase                                                   \
      -databaseType MULTIPURPOSE                                                \
      -automaticMemoryManagement false                                          \
 	 -enableArchive true   \
-	 -initParams db_recovery_file_dest=${ORACLE_BASE}/fast_recovery_area/{DB_UNIQUE_NAME}  \
+	 -initParams db_recovery_file_dest=$ORACLE_BASE/fast_recovery_area/$server  \
 	 db_recovery_file_dest_size=20G  db_create_file_dest=$DATA_DIR STREAMS_POOL_SIZE=1200M \
      -totalMemory 5000                                                         \
      -storageType FS                                                           \
