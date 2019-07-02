@@ -3,7 +3,7 @@ serverFQDN=`hostname -f`
 server=$(echo $serverFQDN | sed 's/\..*//')
 echo $server
 
-:'
+
 ### oraenv for ora 19 version
 export ORACLE_HOSTNAME=$server
 export ORACLE_BASE=/u01/app/oracle
@@ -13,14 +13,16 @@ export ORACLE_HOME=$ORACLE_BASE/product/19.0.0/dbhome_1
 export TNS_ADMIN=${ORACLE_HOME}/network/admin
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${ORACLE_HOME}/lib
 export ORACLE_HOME PATH ORACLE_SID TNS_ADMIN LD_LIBRARY_PATH
-'
 
+:'
 ### oraenv for ora 18 version
 export ORACLE_HOSTNAME=$server
 export ORACLE_BASE=/u01/app/oracle
 export ORACLE_SID=$server
 export ORA_INVENTORY=/u01/app/oraInventory
 export ORACLE_HOME=$ORACLE_BASE/product/18.0.0/dbhome_1
+'
+
 export TNS_ADMIN=${ORACLE_HOME}/network/admin
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${ORACLE_HOME}/lib
 export ORACLE_HOME PATH ORACLE_SID TNS_ADMIN LD_LIBRARY_PATH
@@ -41,9 +43,15 @@ env | grep TNS
 for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
 
 
+# remove previous entries from the inventory file
+
 sed '/oggma/d' /u01/app/oraInventory/ContentsXML/inventory.xml > loc.xml
 mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
 cat /u01/app/oraInventory/ContentsXML/inventory.xml
+
+
+
+
 
 ### install ogg ma core software
 rm -rf $OGG_BASE
