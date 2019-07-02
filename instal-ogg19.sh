@@ -148,7 +148,8 @@ rm -rf /u01/app/ogg/oggma_deploy   /u01/app/ogg/oggma_first
 cd ${OGG_HOME}/bin
 ./oggca.sh -silent -responseFile  ~/scripts/oggsharding/oggca19.rsp HOST_SERVICEMANAGER=$serverFQDN \
 SERVER_WALLET=$WALLET_DIR/$serverFQDN CLIENT_WALLET=$WALLET_DIR/dist_client \
-SHARDING_USER=CN=$serverFQDN SERVICEMANAGER_DEPLOYMENT_HOME=/u01/app/ogg/oggma_deploy OGG_DEPLOYMENT_HOME=/u01/app/ogg/oggma_first
+SHARDING_USER=CN=$serverFQDN SERVICEMANAGER_DEPLOYMENT_HOME=/u01/app/ogg/oggma_deploy OGG_DEPLOYMENT_HOME=/u01/app/ogg/oggma_first \
+ENV_ORACLE_SID=$serverFQDN
 
 
 
