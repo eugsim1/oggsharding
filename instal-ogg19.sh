@@ -133,7 +133,7 @@ export SHARDIND_WALLET_DIR=$ORACLE_BASE/admin/ggshd_wallet
 orapki wallet create -wallet $SHARDIND_WALLET_DIR -pwd Welcome1  -auto_login
 orapki wallet add -wallet $SHARDIND_WALLET_DIR -dn "CN=dist_client" -keysize 2048 -pwd Welcome1
 orapki wallet export -wallet $SHARDIND_WALLET_DIR -pwd Welcome1  -dn "CN=dist_client"  -request $SHARDIND_WALLET_DIR/dist_client.pem
-orapki cert create -wallet $WALLET_DIR/root_ca -request $SHARDIND_WALLET_DIR/dist_client.pem -cert $SHARDIND_WALLET_DIR/dist_client_Cert.pem -serial_num 20 -validity 365 -pwd Welcome1
+orapki cert create -wallet $WALLET_DIR/root_ca -request $SHARDIND_WALLET_DIR/dist_client.pem -cert $SHARDIND_WALLET_DIR/dist_client_Cert.pem -serial_num 40 -validity 365 -pwd Welcome1
 orapki wallet add -wallet $SHARDIND_WALLET_DIR -trusted_cert -cert $WALLET_DIR/rootCA_Cert.pem -pwd Welcome1
 orapki wallet add -wallet $SHARDIND_WALLET_DIR -user_cert  -cert $SHARDIND_WALLET_DIR/dist_client_Cert.pem -pwd Welcome1
 orapki wallet display -wallet $SHARDIND_WALLET_DIR
