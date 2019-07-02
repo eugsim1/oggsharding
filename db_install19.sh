@@ -97,3 +97,23 @@ dbca -silent -createDatabase                                                   \
      -ignorePreReqs
      
  ###    	 -customScripts init.sql \
+ 
+ export ORACLE_SID=$server	 
+sqlplus / as sysdba<<EOF
+ALTER DATABASE ADD SUPPLEMENTAL LOG DATA;
+ALTER DATABASE FORCE LOGGING;
+shutdown immediate;
+startup mount;
+alter database open;
+alter database archivelog;
+alter user gsmuser account unlock identified by Welcome1;
+grant sysdg,sysbackup to gsmuser;
+grant read,write on directory DATA_PUMP_DIR to GSMADMIN_INTERNAL;
+SELECT SUPPLEMENTAL_LOG_DATA_MIN, FORCE_LOGGING FROM V\$DATABASE;
+ALTER DATABASE ADD SUPPLEMENTAL LOG DATA;
+ALTER DATABASE FORCE LOGGING;
+ALTER SYSTEM SWITCH LOGFILE;
+select * from v\$sgainfo;
+alter system set streams_pool_size = '1200M' scope = both;
+select current_size from v\$sga_dynamic_components where component = 'streams pool';
+EOF
