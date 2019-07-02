@@ -14,6 +14,7 @@ export PATH=/usr/sbin:/usr/local/bin:$PATH
 export PATH=$ORACLE_HOME/bin:$PATH
 export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
 export CLASSPATH=$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
+export TNS_ADMIN=$ORACLE_HOME/network/admin
 
 ### kill all previous ogg sessions on this server
 env | grep ORA
