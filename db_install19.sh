@@ -155,6 +155,7 @@ create user mysdbadmin identified by Welcome1;
 grant connect, create session, gsmadmin_role to mysdbadmin;
 grant inherit privileges on user SYS to GSMADMIN_INTERNAL;
 spool off;
+@/u01/app/ogg/oggma/lib/sql/sharding/ggsys_setup.sql
 EOF
 
 
