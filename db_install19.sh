@@ -188,3 +188,16 @@ cd $ORACLE_HOME/gsm
 
 sudo  $ORACLE_HOME/root.sh
 
+export ORACLE_BASE=/u01/app/oracle
+export ORACLE_HOME=/u01/app/oracle/product/19.0.0/gsmhome_1
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
+export PATH=$ORACLE_HOME/bin:$PATH
+export ORA_INVENTORY=/u01/app/oraInventory
+
+
+gdsctl delete catalog  -force
+gdsctl create shardcatalog -database sharddirector:1521/shardcat -user mysdbadmin/Welcome1 -sdb cust_sdb -region region1, region2 -agent_port 7777 -agent_password Welcome1 -sharding system -force
+gdsctl add gsm -gsm sharddirector1  -pwd Welcome1 -listener 1522 -catalog sharddirector:1521:shardcat -region region1 -trace_level 16
+gdsctl start gsm -gsm sharddirector1
+gdsctl add credential -credential mycredential -osaccount oracle -ospassword Toula1412#
+
