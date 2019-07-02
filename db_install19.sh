@@ -71,6 +71,8 @@ unzip -oq /u01/stage/V982063-01.zip
 sudo   /u01/app/oraInventory/orainstRoot.sh
 sudo  /u01/app/oracle/product/19.0.0/dbhome_1/root.sh
 
+netca -silent -responseFile $ORACLE_HOME/assistants/netca/netca.rsp
+
 sudo rm -rf /etc/oratab
 sudo touch /etc/oratab
 sudo chmod ugo+rw /etc/oratab
@@ -95,4 +97,3 @@ dbca -silent -createDatabase                                                   \
      -ignorePreReqs
      
  ###    	 -customScripts init.sql \
-	 
