@@ -21,6 +21,9 @@ env | grep TNS
 ### create a new oggma deployement from scratch
 for pid in $(ps -ef | grep "oggma" | awk '{print $2}'); do kill -9 $pid; done
 
+## kill all db sessions on this server
+for pid in $(ps -ef | grep "pmon" | awk '{print $2}'); do kill -9 $pid; done
+
 sed '/OraDB19Home1/d' /u01/app/oraInventory/ContentsXML/inventory.xml > loc.xml
 mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
 cat /u01/app/oraInventory/ContentsXML/inventory.xml
