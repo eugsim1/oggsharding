@@ -83,7 +83,7 @@ echo $serverFQDN
 export WALLET_DIR=$ORACLE_BASE/admin/wallet_dir
 export SHARDIND_WALLET_DIR=$ORACLE_BASE/admin/ggshd_wallet
 cd $ORACLE_BASE/admin	
-rm -rf 	$ORACLE_BASE/admin/ggshd_wallet $ORACLE_BASE/admin/wallet_dir
+rm -rf 	$WALLET_DIR $SHARDIND_WALLET_DIR
 mkdir -p $ORACLE_BASE/admin/ggshd_wallet
 mkdir -p $ORACLE_BASE/admin/wallet_dir
 cd $ORACLE_BASE/admin
