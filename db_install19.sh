@@ -1,9 +1,21 @@
 source ~/scripts/oggsharding/ora19.env
 
+sed '/OraDB19Home1/d' /u01/app/oraInventory/ContentsXML/inventory.xml > loc.xml
+mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
+cat /u01/app/oraInventory/ContentsXML/inventory.xml
+
+
+sed '/OraGSM19Home1/d' /u01/app/oraInventory/ContentsXML/inventory.xml > loc.xml
+mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
+cat /u01/app/oraInventory/ContentsXML/inventory.xml
+
+
 ## install oracle software
 mkdir -p $ORACLE_HOME
 cd $ORACLE_HOME
 unzip -oq /u01/stage/LINUX.X64_193000_db_home.zip
+
+
 
 # Install DB software Silent mode.
 ./runInstaller -ignorePrereq -waitforcompletion -silent                        \
