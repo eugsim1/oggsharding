@@ -31,12 +31,17 @@ for pid in $(ps -ef | grep "lsnr" | awk '{print $2}'); do kill -9 $pid; done
 
 sed '/OraDB19Home1/d' /u01/app/oraInventory/ContentsXML/inventory.xml > loc.xml
 mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
-cat /u01/app/oraInventory/ContentsXML/inventory.xml
+
+
+##
+
 
 ## remove previous entries from inventory clean install
 sed '/OraGSM19Home1/d' /u01/app/oraInventory/ContentsXML/inventory.xml > loc.xml
 mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
-cat /u01/app/oraInventory/ContentsXML/inventory.xml
+
+echo "star script" > /home/oracle/ansible.log
+cat /u01/app/oraInventory/ContentsXML/inventory.xml > /home/oracle/ansible.log
 
 cd $ORACLE_BASE
 rm -rf *
@@ -46,6 +51,9 @@ rm -rf ogg ogg19
 ## install oracle software
 mkdir -p $DATA_DIR
 mkdir -p $ORACLE_HOME
+
+ls -la  $ORACLE_BASE >>  /home/oracle/ansible.log
+
 cd $ORACLE_HOME
 unzip -oq /u01/stage/V982063-01.zip
 
@@ -68,7 +76,8 @@ unzip -oq /u01/stage/V982063-01.zip
     oracle.install.db.OSKMDBA_GROUP=dba                                        \
     oracle.install.db.OSRACDBA_GROUP=dba                                       \
     SECURITY_UPDATES_VIA_MYORACLESUPPORT=false                                 \
-    DECLINE_SECURITY_UPDATES=true
+    DECLINE_SECURITY_UPDATES=true 1>> /home/oracle/ansible.log
+    
 sudo   /u01/app/oraInventory/orainstRoot.sh
 sudo  /u01/app/oracle/product/19.0.0/dbhome_1/root.sh
 	
@@ -106,7 +115,8 @@ for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
 
 sed '/oggma/d' /u01/app/oraInventory/ContentsXML/inventory.xml | sed '/OUIPlaceHolderDummyHome/d' > loc.xml
 mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
-cat /u01/app/oraInventory/ContentsXML/inventory.xml
+echo "oggma pre install" >> /home/oracle/ansible.log
+cat /u01/app/oraInventory/ContentsXML/inventory.xml  >> /home/oracle/ansible.log
 
 ### install ogg ma core software
 rm -rf $OGG_BASE
@@ -124,8 +134,8 @@ cd fbo_ggs_Linux_x64_services_shiphome/Disk1
     INVENTORY_LOCATION=${ORA_INVENTORY}                                        \
 	INSTALL_OPTION=ORA19c   SOFTWARE_LOCATION=${OGG_BASE}/oggma
 	
-which java
-which orapki
+which java  >> /home/oracle/ansible.log
+which orapki >> /home/oracle/ansible.log
 
 	
 #### configure databases
@@ -154,7 +164,7 @@ dbca -silent -createDatabase                                                   \
      -datafileDestination "${DATA_DIR}"                                        \
      -redoLogFileSize 50                                                       \
      -emConfiguration NONE                                                   \
-     -ignorePreReqs
+     -ignorePreReqs 1>> /home/oracle/ansible.log
      
  ###    	 -customScripts init.sql \
  
@@ -199,7 +209,7 @@ dbca -silent -createDatabase                                                   \
      -datafileDestination "${DATA_DIR}"                                        \
      -redoLogFileSize 50                                                       \
      -emConfiguration NONE                                                     \
-     -ignorePreReqs	
+     -ignorePreReqs	1>> /home/oracle/ansible.log
 
 export ORACLE_SID=shardcat
 sqlplus / as sysdba<<EOF
@@ -247,7 +257,7 @@ cd $ORACLE_HOME/gsm
     ORACLE_HOME=${ORACLE_HOME}                                                 \
     ORACLE_BASE=${ORACLE_BASE}                                                 \
     SECURITY_UPDATES_VIA_MYORACLESUPPORT=false                                 \
-    DECLINE_SECURITY_UPDATES=true
+    DECLINE_SECURITY_UPDATES=true 1>> /home/oracle/ansible.log
 
 sudo  $ORACLE_HOME/root.sh
 
