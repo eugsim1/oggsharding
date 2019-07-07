@@ -88,7 +88,7 @@ mkdir -p $ORACLE_BASE/admin/ggshd_wallet
 mkdir -p $ORACLE_BASE/admin/wallet_dir
 cd $ORACLE_BASE/admin
 
-:'
+
 if [[ $server == "sharddirector" ]]
  then 
   orapki wallet create -wallet  $WALLET_DIR/root_ca -pwd Welcome1  -auto_login
@@ -101,7 +101,7 @@ if [[ $server == "sharddirector" ]]
   cd $ORACLE_BASE/admin
   tar -xvf wallet_dir.tar
 fi
-'
+
 
   orapki wallet create -wallet  $WALLET_DIR/root_ca -pwd Welcome1  -auto_login
   orapki wallet add -wallet $WALLET_DIR/root_ca -dn "CN=RootCA" -keysize 2048 -self_signed -validity 7300 -pwd Welcome1 -sign_alg sha256
