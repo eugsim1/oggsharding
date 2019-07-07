@@ -66,11 +66,66 @@ unzip -oq /u01/stage/V982063-01.zip
     oracle.install.db.OSRACDBA_GROUP=dba                                       \
     SECURITY_UPDATES_VIA_MYORACLESUPPORT=false                                 \
     DECLINE_SECURITY_UPDATES=true
-	
-	
 sudo   /u01/app/oraInventory/orainstRoot.sh
 sudo  /u01/app/oracle/product/19.0.0/dbhome_1/root.sh
+	
+	
+### install ogg ma software
+### oraenv for ora 19 version
+export ORACLE_HOSTNAME=$server
+export ORACLE_BASE=/u01/app/oracle
+export ORACLE_SID=$server
+export ORA_INVENTORY=/u01/app/oraInventory
+export ORACLE_HOME=$ORACLE_BASE/product/19.0.0/dbhome_1
+export TNS_ADMIN=${ORACLE_HOME}/network/admin
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${ORACLE_HOME}/lib
+export ORACLE_HOME PATH ORACLE_SID TNS_ADMIN LD_LIBRARY_PATH
+export TNS_ADMIN=${ORACLE_HOME}/network/admin
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${ORACLE_HOME}/lib
+export ORACLE_HOME PATH ORACLE_SID TNS_ADMIN LD_LIBRARY_PATH
+export OGG_BASE=/u01/app/ogg
+export OGG_HOME=/u01/app/ogg/oggma
+export OGG_BIN=/u01/app/ogg/oggbin
+export JAVA_HOME=$OGG_HOME/jdk
+export PATH=$OGG_HOME/bin:$OGG_HOME/jdk/bin:$PATH
 
+OGG_ETC_HOME=/u01/app/ogg/oggma_first/etc
+OGG_VAR_HOME=/u01/app/ogg/oggma_first/var
+export OGG_HOME OGG_ETC_HOME OGG_VAR_HOME
+
+### kill all previous ogg sessions on this server
+env | grep ORA
+env | grep TNS
+### create a new oggma deployement from scratch
+for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
+
+# remove previous entries from the inventory file
+
+sed '/oggma/d' /u01/app/oraInventory/ContentsXML/inventory.xml > loc.xml
+mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
+cat /u01/app/oraInventory/ContentsXML/inventory.xml
+
+### install ogg ma core software
+rm -rf $OGG_BASE
+mkdir -p $OGG_BASE
+mkdir -p $OGG_BIN
+export OGG_HOME=/u01/app/ogg
+echo $OGG_HOME
+cd $OGG_BIN
+unzip -oq /u01/stage/191001_fbo_ggs_Linux_x64_services_shiphome.zip
+cd fbo_ggs_Linux_x64_services_shiphome/Disk1
+
+./runInstaller -ignorePrereq -waitforcompletion -silent                        \
+    -responseFile /u01/app/ogg/oggbin/fbo_ggs_Linux_x64_services_shiphome/Disk1/response/oggcore.rsp               \
+    UNIX_GROUP_NAME=oinstall                                                   \
+    INVENTORY_LOCATION=${ORA_INVENTORY}                                        \
+	INSTALL_OPTION=ORA19c   SOFTWARE_LOCATION=${OGG_BASE}/oggma
+	
+which java
+which orapki
+
+	
+#### configure databases
 netca -silent -responseFile $ORACLE_HOME/assistants/netca/netca.rsp
 
 sudo rm -rf /etc/oratab
