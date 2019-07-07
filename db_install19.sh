@@ -104,7 +104,7 @@ for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
 
 # remove previous entries from the inventory file
 
-sed '/oggma/d' /u01/app/oraInventory/ContentsXML/inventory.xml > loc.xml
+sed '/oggma/d' /u01/app/oraInventory/ContentsXML/inventory.xml | sed '/OUIPlaceHolderDummyHome/d' > loc.xml
 mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
 cat /u01/app/oraInventory/ContentsXML/inventory.xml
 
