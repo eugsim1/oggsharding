@@ -42,6 +42,7 @@ cd $ORACLE_BASE
 rm -rf *
 rm -rf $DATA_DIR
 rm -rf $ORACLE_HOME
+rm -rf ogg ogg19
 ## install oracle software
 mkdir -p $DATA_DIR
 mkdir -p $ORACLE_HOME
