@@ -4,7 +4,8 @@ serverFQDN=`hostname -f`
 server=$(echo $serverFQDN | sed 's/\..*//')
 echo $server
 
-echo $server > /home/oracle/ansible.log
+echo "=======================================================" >/home/oracle/ansible.log
+echo $server >> /home/oracle/ansible.log
 echo "start script" >> /home/oracle/ansible.log
 
 export ORACLE_HOSTNAME=$server
