@@ -153,7 +153,7 @@ dbca -silent -createDatabase                                                   \
      
  ###    	 -customScripts init.sql \
  
- export ORACLE_SID=$server	 
+export ORACLE_SID=$server	 
 sqlplus / as sysdba<<EOF
 ALTER DATABASE ADD SUPPLEMENTAL LOG DATA;
 ALTER DATABASE FORCE LOGGING;
@@ -177,6 +177,9 @@ EOF
 #### install shardcate database
 	
 ### install the catalog database
+
+if [[ $server == "sharddirector" ]]
+then
 dbca -silent -createDatabase                                                   \
      -templateName General_Purpose.dbc                                         \
      -gdbname shardcat -sid  shardcat -responseFile NO_VALUE         \
@@ -192,7 +195,6 @@ dbca -silent -createDatabase                                                   \
      -redoLogFileSize 50                                                       \
      -emConfiguration NONE                                                     \
      -ignorePreReqs	
-
 
 export ORACLE_SID=shardcat
 sqlplus / as sysdba<<EOF
@@ -256,4 +258,6 @@ gdsctl create shardcatalog -database sharddirector:1521/shardcat -user mysdbadmi
 gdsctl add gsm -gsm sharddirector1  -pwd Welcome1 -listener 1522 -catalog sharddirector:1521:shardcat -region region1 -trace_level 16
 gdsctl start gsm -gsm sharddirector1
 gdsctl add credential -credential mycredential -osaccount oracle -ospassword Toula1412#
+
+fi
 
