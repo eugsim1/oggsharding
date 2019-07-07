@@ -38,6 +38,8 @@ sed '/OraGSM19Home1/d' /u01/app/oraInventory/ContentsXML/inventory.xml > loc.xml
 mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
 cat /u01/app/oraInventory/ContentsXML/inventory.xml
 
+cd $ORACLE_BASE
+rm -rf *
 rm -rf $DATA_DIR
 rm -rf $ORACLE_HOME
 ## install oracle software
