@@ -4,6 +4,9 @@ serverFQDN=`hostname -f`
 server=$(echo $serverFQDN | sed 's/\..*//')
 echo $server
 
+echo $server > /home/oracle/ansible.log
+echo "start script" >> /home/oracle/ansible.log
+
 export ORACLE_HOSTNAME=$server
 export ORACLE_BASE=/u01/app/oracle
 export ORACLE_HOME=$ORACLE_BASE/product/19.0.0/dbhome_1
@@ -40,7 +43,7 @@ mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
 sed '/OraGSM19Home1/d' /u01/app/oraInventory/ContentsXML/inventory.xml > loc.xml
 mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
 
-echo "star script" > /home/oracle/ansible.log
+
 cat /u01/app/oraInventory/ContentsXML/inventory.xml > /home/oracle/ansible.log
 
 cd $ORACLE_BASE
