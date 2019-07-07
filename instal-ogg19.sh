@@ -97,16 +97,13 @@ if [[ $server == "sharddirector" ]]
   tar -cvf wallet_dir.tar wallet_dir
   scp wallet_dir.tar shard1:/$ORACLE_BASE/admin/
   scp wallet_dir.tar shard2:/$ORACLE_BASE/admin/
+  scp wallet_dir.tar shard3:/$ORACLE_BASE/admin/
  else
   cd $ORACLE_BASE/admin
   tar -xvf wallet_dir.tar
 fi
 
 
-  orapki wallet create -wallet  $WALLET_DIR/root_ca -pwd Welcome1  -auto_login
-  orapki wallet add -wallet $WALLET_DIR/root_ca -dn "CN=RootCA" -keysize 2048 -self_signed -validity 7300 -pwd Welcome1 -sign_alg sha256
-  orapki wallet export -wallet $WALLET_DIR/root_ca  -dn "CN=RootCA" -cert $WALLET_DIR/rootCA_Cert.pem -pwd Welcome1
-  orapki wallet display -wallet $WALLET_DIR/root_ca -pwd Welcome1
   ## create serverFQDN certificate for the host
 orapki wallet create -wallet $WALLET_DIR/$serverFQDN -auto_login -pwd Welcome1
 orapki wallet add -wallet $WALLET_DIR/$serverFQDN -dn "CN=$serverFQDN" -keysize 2048 -pwd Welcome1
