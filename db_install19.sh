@@ -135,9 +135,11 @@ sudo rm -rf /etc/oratab
 sudo touch /etc/oratab
 sudo chmod ugo+rw /etc/oratab
 sudo chown oracle:oinstall /etc/oratab
+ serverDB=`echo $server | cut -c 1-12`
+
 dbca -silent -createDatabase                                                   \
      -templateName General_Purpose.dbc                                         \
-     -gdbname $server -sid  $server -responseFile NO_VALUE         \
+     -gdbname $serverDB -sid  $serverDB -responseFile NO_VALUE         \
      -characterSet AL32UTF8                                                    \
      -sysPassword SysPassword1                                                 \
      -systemPassword SysPassword1                                              \
@@ -156,7 +158,7 @@ dbca -silent -createDatabase                                                   \
      
  ###    	 -customScripts init.sql \
  
-export ORACLE_SID=$server	 
+export ORACLE_SID=$serverDB	 
 sqlplus / as sysdba<<EOF
 ALTER DATABASE ADD SUPPLEMENTAL LOG DATA;
 ALTER DATABASE FORCE LOGGING;
