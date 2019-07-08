@@ -66,12 +66,12 @@ DEPLOYMENT_NAME=oggma_first
 #-------------------------------------------------------------------------------
 # Specify the administrator account username.
 #-------------------------------------------------------------------------------
-ADMINISTRATOR_USER=admin
+ADMINISTRATOR_USER=oggadmin
 
 #-------------------------------------------------------------------------------
 # Specify the administrator account password.
 #-------------------------------------------------------------------------------
-ADMINISTRATOR_PASSWORD=Welcome1
+ADMINISTRATOR_PASSWORD=
 
 
 ################################################################################
@@ -94,7 +94,7 @@ HOST_SERVICEMANAGER=shard1
 #-------------------------------------------------------------------------------
 # Specify the port for the Service Manager.
 #-------------------------------------------------------------------------------
-PORT_SERVICEMANAGER=9001
+PORT_SERVICEMANAGER=9000
 
 #-------------------------------------------------------------------------------
 # Specify if SSL / TLS is or will be enabled for the deployment.
@@ -162,32 +162,32 @@ OGG_SOFTWARE_HOME=/u01/app/ogg/oggma
 #-------------------------------------------------------------------------------
 # Specify the location of the new or existing OGG deployment.
 #-------------------------------------------------------------------------------
-OGG_DEPLOYMENT_HOME=/u01/app/ogg/oggma_first
+OGG_DEPLOYMENT_HOME=/u01/app/oggma/oggma_first
 
 #-------------------------------------------------------------------------------
 # Specify the location for OGG_ETC_HOME.
 #-------------------------------------------------------------------------------
-OGG_ETC_HOME=/u01/app/ogg/oggma_first/etc
+OGG_ETC_HOME=
 
 #-------------------------------------------------------------------------------
 # Specify the location for OGG_CONF_HOME.
 #-------------------------------------------------------------------------------
-OGG_CONF_HOME=/u01/app/ogg/oggma_first/conf
+OGG_CONF_HOME=
 
 #-------------------------------------------------------------------------------
 # Specify the location for OGG_SSL_HOME.
 #-------------------------------------------------------------------------------
-OGG_SSL_HOME=/u01/app/ogg/oggma_first/ssl
+OGG_SSL_HOME=
 
 #-------------------------------------------------------------------------------
 # Specify the location for OGG_VAR_HOME.
 #-------------------------------------------------------------------------------
-OGG_VAR_HOME=/u01/app/ogg/oggma_first/var
+OGG_VAR_HOME=
 
 #-------------------------------------------------------------------------------
 # Specify the location for OGG_DATA_HOME.
 #-------------------------------------------------------------------------------
-OGG_DATA_HOME=/u01/app/ogg/oggma_first/data
+OGG_DATA_HOME=
 
 
 ###############################################################################
@@ -204,7 +204,7 @@ ENV_ORACLE_HOME=/u01/app/oracle/product/19.0.0/dbhome_1
 #-------------------------------------------------------------------------------
 # Specify the value for the LD_LIBRARY_PATH environment variable.
 #-------------------------------------------------------------------------------
-ENV_LD_LIBRARY_PATH=${ORACLE_HOME}/lib:/u01/app/oracle/product/19.0.0/dbhome_1/lib:/lib:/usr/lib
+ENV_LD_LIBRARY_PATH=${ORACLE_HOME}/lib:/u01/app/oracle/product/19.0.0/dbhome_1/lib
 
 #-------------------------------------------------------------------------------
 # Specify the value for the TNS_ADMIN environment variable.
@@ -214,7 +214,7 @@ ENV_TNS_ADMIN=/u01/app/oracle/product/19.0.0/dbhome_1/network/admin
 #-------------------------------------------------------------------------------
 # Specify the value for the ORACLE_SID environment variable.
 #-------------------------------------------------------------------------------
-ENV_ORACLE_SID=sh1
+ENV_ORACLE_SID=shard1
 
 #-------------------------------------------------------------------------------
 # This option is only needed when Sharding will be enabled.
@@ -243,7 +243,7 @@ CIPHER_SUITES=TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_128_GCM_SHA256,TL
 #-------------------------------------------------------------------------------
 # If SSL / TLS will be enabled, specify the server Wallet to be copied.
 #-------------------------------------------------------------------------------
-SERVER_WALLET=/home/oracle/wallet_dir/shard1
+SERVER_WALLET=/u01/app/oracle/admin/wallet_dir/shard1
 
 #-------------------------------------------------------------------------------
 # If SSL / TLS will be enabled, specify the Oracle GoldenGate server certificate 
@@ -265,7 +265,7 @@ SERVER_CERTIFICATE_KEY_FILE_PWD=
 #-------------------------------------------------------------------------------
 # If SSL / TLS will be enabled, specify the client Wallet to be copied. (Optional)
 #-------------------------------------------------------------------------------
-CLIENT_WALLET=/home/oracle/wallet_dir/shard1
+CLIENT_WALLET=/u01/app/oracle/admin/wallet_dir/dist_client
 
 #-------------------------------------------------------------------------------
 # If SSL / TLS will be enabled, specify the Oracle GoldenGate client certificate 
@@ -301,7 +301,7 @@ SHARDING_ENABLED=true
 # This option is only needed when Sharding will be enabled.
 # Specify the Sharding user.
 #-------------------------------------------------------------------------------
-SHARDING_USER=CN=shard1.us.oracle.com
+SHARDING_USER=CN=shard1
 
 
 ###############################################################################
@@ -320,7 +320,7 @@ ADMINISTRATION_SERVER_ENABLED=true
 # Required only if the Administration server will be enabled. 
 # Specify the port for Administration Server.
 #-------------------------------------------------------------------------------
-PORT_ADMINSRVR=9002
+PORT_ADMINSRVR=9001
 
 #-------------------------------------------------------------------------------
 # Specify if the Distribution server will be enabled.
@@ -332,7 +332,7 @@ DISTRIBUTION_SERVER_ENABLED=true
 # Required only if the Distribution server will be enabled. 
 # Specify the port for Distribution Server.
 #-------------------------------------------------------------------------------
-PORT_DISTSRVR=9003
+PORT_DISTSRVR=9002
 
 #-------------------------------------------------------------------------------
 # If security is disabled, specify if this non-secure deployment will be used
@@ -350,13 +350,13 @@ RECEIVER_SERVER_ENABLED=true
 # Required only if the Receiver server will be enabled. 
 # Specify the port for Receiver Server.
 #-------------------------------------------------------------------------------
-PORT_RCVRSRVR=9004
+PORT_RCVRSRVR=9003
 
 #-------------------------------------------------------------------------------
 # Specify if Performance Metrics server will be enabled.
 # Specify true if Performance Metrics server will be enabled, false otherwise.
 #-------------------------------------------------------------------------------
-METRICS_SERVER_ENABLED=true
+METRICS_SERVER_ENABLED=false
 
 #-------------------------------------------------------------------------------
 # Specify if Performance Metrics server is a critical service.
@@ -371,13 +371,13 @@ METRICS_SERVER_IS_CRITICAL=false
 # This option is only needed when Performance Metrics server will be enabled.
 # Specify the port for Performance Metrics server (TCP).
 #-------------------------------------------------------------------------------
-PORT_PMSRVR=9005
+PORT_PMSRVR=9004
 
 #-------------------------------------------------------------------------------
 # This option is only needed when Performance Metrics server will be enabled.
 # Specify the port for Performance Metrics server (UDP).
 #-------------------------------------------------------------------------------
-UDP_PORT_PMSRVR=9006
+UDP_PORT_PMSRVR=9005
 
 #-------------------------------------------------------------------------------
 # This option is only needed when Performance Metrics server will be enabled.
@@ -415,4 +415,4 @@ OGG_SCHEMA=ggadmin
 # Specify if the deployment files should be removed from disk.
 # Specify true if the deployment files should be removed, false otherwise.
 #-------------------------------------------------------------------------------
-REMOVE_DEPLOYMENT_FROM_DISK=false
+REMOVE_DEPLOYMENT_FROM_DISK=
