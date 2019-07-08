@@ -143,9 +143,12 @@ orapki wallet display -wallet $SHARDIND_WALLET_DIR
 export OGG_BASE=/u01/app/ogg
 export OGG_HOME=/u01/app/ogg/oggma
 export OGG_BIN=/u01/app/ogg/oggbin
-rm -rf /u01/app/ogg/oggma_deploy   /u01/app/ogg/oggma_first
+server=`hostname -f`
+for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
+rm -rf /u01/app/ogg/oggma_first /u01/app/ogg/oggma_deploy
 cd ${OGG_HOME}/bin
-./oggca.sh -silent -responseFile  ~/scripts/oggsharding/oggca19.rsp
+./oggca.sh -silent -responseFile  ~/scripts/oggsharding/oggca19.rsp HOST_SERVICEMANAGER=$server \
+SERVER_WALLET=/u01/app/oracle/admin/wallet_dir/$server
 
 
 
