@@ -4,9 +4,6 @@ serverFQDN=`hostname -f`
 server=$(echo $serverFQDN | sed 's/\..*//')
 echo $server
 
-echo "=======================================================" 2&>1 /home/oracle/ansible.log
-echo $server 2&>>1 /home/oracle/ansible.log
-echo "start script" 2&>>1 /home/oracle/ansible.log
 
 export ORACLE_HOSTNAME=$server
 export ORACLE_BASE=/u01/app/oracle
@@ -169,7 +166,7 @@ dbca -silent -createDatabase                                                   \
      -datafileDestination "${DATA_DIR}"                                        \
      -redoLogFileSize 50                                                       \
      -emConfiguration NONE                                                   \
-     -ignorePreReqs 1>> /home/oracle/ansible.log
+     -ignorePreReqs 
      
  ###    	 -customScripts init.sql \
  
@@ -215,7 +212,7 @@ dbca -silent -createDatabase                                                   \
      -datafileDestination "${DATA_DIR}"                                        \
      -redoLogFileSize 50                                                       \
      -emConfiguration NONE                                                     \
-     -ignorePreReqs	1>> /home/oracle/ansible.log
+     -ignorePreReqs	
 
 export ORACLE_SID=shardcat
 sqlplus / as sysdba<<EOF
@@ -263,8 +260,8 @@ cd $ORACLE_HOME/gsm
     ORACLE_HOME=${ORACLE_HOME}                                                 \
     ORACLE_BASE=${ORACLE_BASE}                                                 \
     SECURITY_UPDATES_VIA_MYORACLESUPPORT=false                                 \
-    DECLINE_SECURITY_UPDATES=true 1>> /home/oracle/ansible.log
-
+    DECLINE_SECURITY_UPDATES=true 
+    
 sudo  $ORACLE_HOME/root.sh
 
 export ORACLE_BASE=/u01/app/oracle
