@@ -150,7 +150,8 @@ sudo touch /etc/oratab
 sudo chmod ugo+rw /etc/oratab
 sudo chown oracle:oinstall /etc/oratab
  serverDB=`echo $server | cut -c 1-12`
-
+if [[ $server != "sharddirector" ]]
+then 
 dbca -silent -createDatabase                                                   \
      -templateName General_Purpose.dbc                                         \
      -gdbname $serverDB -sid  $serverDB -responseFile NO_VALUE         \
@@ -191,6 +192,7 @@ select * from v\$sgainfo;
 alter system set streams_pool_size = '1200M' scope = both;
 select current_size from v\$sga_dynamic_components where component = 'streams pool';
 EOF
+fi
 
 
 #### install shardcate database
