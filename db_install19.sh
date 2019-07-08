@@ -4,10 +4,9 @@ serverFQDN=`hostname -f`
 server=$(echo $serverFQDN | sed 's/\..*//')
 echo $server
 
-sudo bash -c 'echo "hello" > f.txt'
-sudo bash -c `echo "=======================================================" 2&>1 /home/oracle/ansible.log`
-sudo bash -c  `echo $server` 2&>>1 /home/oracle/ansible.log`
-sudo bash -c  `echo "start script"` 2&>>1 /home/oracle/ansible.log`
+echo "=======================================================" 2&>1 /home/oracle/ansible.log
+echo $server 2&>>1 /home/oracle/ansible.log
+echo "start script" 2&>>1 /home/oracle/ansible.log
 
 export ORACLE_HOSTNAME=$server
 export ORACLE_BASE=/u01/app/oracle
