@@ -1,4 +1,5 @@
 ##ogg19.env
+!#/bin/bash
 serverFQDN=`hostname -f` 
 server=$(echo $serverFQDN | sed 's/\..*//')
 echo $server
