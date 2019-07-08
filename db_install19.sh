@@ -33,13 +33,10 @@ for pid in $(ps -ef | grep "lsnr" | awk '{print $2}'); do kill -9 $pid; done
 sed '/OraDB19Home1/d' /u01/app/oraInventory/ContentsXML/inventory.xml > loc.xml
 mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
 
-
-##
-
-
 ## remove previous entries from inventory clean install
-sed '/OraGSM19Home1/d' /u01/app/oraInventory/ContentsXML/inventory.xml > loc.xml
+sed '/OraGSM19Home1/d' /u01/app/oraInventory/ContentsXML/inventory.xml | sed '/OUIPlaceHolderDummyHome/d' > loc.xml
 mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
+
 
 
 cat /u01/app/oraInventory/ContentsXML/inventory.xml > /home/oracle/ansible.log
@@ -77,7 +74,7 @@ unzip -oq /u01/stage/V982063-01.zip
     oracle.install.db.OSKMDBA_GROUP=dba                                        \
     oracle.install.db.OSRACDBA_GROUP=dba                                       \
     SECURITY_UPDATES_VIA_MYORACLESUPPORT=false                                 \
-    DECLINE_SECURITY_UPDATES=true 1>> /home/oracle/ansible.log
+    DECLINE_SECURITY_UPDATES=true 
     
 sudo   /u01/app/oraInventory/orainstRoot.sh
 sudo  /u01/app/oracle/product/19.0.0/dbhome_1/root.sh
