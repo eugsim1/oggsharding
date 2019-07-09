@@ -56,6 +56,7 @@ rm -rf ../ogg ..//ogg19
 ## install oracle software
 mkdir -p $DATA_DIR
 mkdir -p $ORACLE_HOME
+mkdir -p /u01/app/oracle/admin/$server/adump
 
 echo "start unzip V982063-01.zip" `date +%s` >> $logfile
 
@@ -221,6 +222,7 @@ fi
 
 if [[ $server == "sharddirector" ]]
 then
+mkdir -p  /u01/app/oracle/admin/shardcat/adump
 echo "shardirector create shardcat database" >> $logfile
 dbca -silent -createDatabase                                                   \
      -templateName General_Purpose.dbc                                         \
