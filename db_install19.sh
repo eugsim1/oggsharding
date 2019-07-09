@@ -303,11 +303,11 @@ echo "           ">> $logfile
 echo "begin gdsctl commands" >> $logfile
 
 
-gdsctl delete catalog  -force
-gdsctl create shardcatalog -database sharddirector:1521/shardcat -user mysdbadmin/Welcome1 -sdb cust_sdb -region region1, region2 -agent_port 7777 -agent_password Welcome1 -sharding system -force
-gdsctl add gsm -gsm sharddirector1  -pwd Welcome1 -listener 1522 -catalog sharddirector:1521:shardcat -region region1 -trace_level 16
-gdsctl start gsm -gsm sharddirector1
-gdsctl add credential -credential mycredential -osaccount oracle -ospassword Toula1412#
+gdsctl delete catalog  -force >> $logfile
+gdsctl create shardcatalog -database sharddirector:1521/shardcat -user mysdbadmin/Welcome1 -sdb cust_sdb -region region1, region2 -agent_port 7777 -agent_password Welcome1 -sharding system -force >> $logfile
+gdsctl add gsm -gsm sharddirector1  -pwd Welcome1 -listener 1522 -catalog sharddirector:1521:shardcat -region region1 -trace_level 16 >> $logfile
+gdsctl start gsm -gsm sharddirector1 >> $logfile
+gdsctl add credential -credential mycredential -osaccount oracle -ospassword Toula1412# >> $logfile
 
 echo "end gdsctl command" >> $logfile
 fi
