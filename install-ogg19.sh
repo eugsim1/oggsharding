@@ -73,12 +73,12 @@ if [[ $server == "sharddirector" ]]
   orapki wallet add -wallet $WALLET_DIR/root_ca -dn "CN=RootCA" -keysize 2048 -self_signed -validity 7300 -pwd Welcome1 -sign_alg sha256 >> $logfile
   orapki wallet export -wallet $WALLET_DIR/root_ca  -dn "CN=RootCA" -cert $WALLET_DIR/rootCA_Cert.pem -pwd Welcome1 >> $logfile
   tar -cvf wallet_dir.tar wallet_dir >> $logfile
-  ssh shard1 'mkdir -p $ORACLE_BASE/admin'
-  ssh shard2 'mkdir -p $ORACLE_BASE/admin'
-  ssh shard3 'mkdir -p $ORACLE_BASE/admin'
-  scp wallet_dir.tar shard1:/$ORACLE_BASE/admin/    >> $logfile
-  scp wallet_dir.tar shard2:/$ORACLE_BASE/admin/    >> $logfile
-  scp wallet_dir.tar shard3:/$ORACLE_BASE/admin/    >> $logfile
+  ssh shard1 'mkdir -p /u01/app/oracle/admin'
+  #ssh shard2 'mkdir -p /u01/app/oracle/admin'
+  #ssh shard3 'mkdir -p /u01/app/oracle/admin'
+  scp wallet_dir.tar shard1:/u01/app/oracle/admin    >> $logfile
+  #scp wallet_dir.tar shard2:/u01/app/oracle/admin    >> $logfile
+  #scp wallet_dir.tar shard3:/u01/app/oracle/admin    >> $logfile
  else
   cd $ORACLE_BASE/admin
   echo "deploy tar file from server"
