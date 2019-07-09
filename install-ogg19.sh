@@ -73,6 +73,9 @@ if [[ $server == "sharddirector" ]]
   orapki wallet add -wallet $WALLET_DIR/root_ca -dn "CN=RootCA" -keysize 2048 -self_signed -validity 7300 -pwd Welcome1 -sign_alg sha256 >> $logfile
   orapki wallet export -wallet $WALLET_DIR/root_ca  -dn "CN=RootCA" -cert $WALLET_DIR/rootCA_Cert.pem -pwd Welcome1 >> $logfile
   tar -cvf wallet_dir.tar wallet_dir >> $logfile
+  ssh shard1 'mkdir -p $ORACLE_BASE/admin'
+  ssh shard2 'mkdir -p $ORACLE_BASE/admin'
+  ssh shard3 'mkdir -p $ORACLE_BASE/admin'
   scp wallet_dir.tar shard1:/$ORACLE_BASE/admin/    >> $logfile
   scp wallet_dir.tar shard2:/$ORACLE_BASE/admin/    >> $logfile
   scp wallet_dir.tar shard3:/$ORACLE_BASE/admin/    >> $logfile
@@ -83,9 +86,9 @@ if [[ $server == "sharddirector" ]]
 fi
 
 
-## create server certificate for the host short name not FQDN
 if [[ $server != "sharddirector" ]]
  then 
+## create server certificate for the host short name not FQDN
 orapki wallet create -wallet $WALLET_DIR/$server -auto_login -pwd Welcome1
 orapki wallet add -wallet $WALLET_DIR/$server -dn "CN=$server" -keysize 2048 -pwd Welcome1
 orapki wallet export -wallet $WALLET_DIR/$server -pwd Welcome1  -dn "CN=$server"  -request $WALLET_DIR/${server}_req.pem
@@ -181,9 +184,9 @@ curl -v -u   oggadmin:Welcome1 \
 -X GET https://$server:9000/services/v2/deployments/oggma_first | jq    >> $logfile
 #cd $OGG_HOME
 
-#adminclient connect  https://shard1.sub06291314360.oggma.oraclevcn.com:9001 DEPLOYMENT  oggma_first as oggadmin password Welcome1
-fi
 
+fi
+#adminclient connect  https://shard1.sub06291314360.oggma.oraclevcn.com:9001 DEPLOYMENT  oggma_first as oggadmin password Welcome1
 end=`date +%s`
 echo Execution time was `expr $end - $start` seconds. >> $logfile
 total_time=`expr $end - $start`
