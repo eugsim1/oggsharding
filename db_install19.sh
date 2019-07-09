@@ -278,7 +278,7 @@ unzip -oq /u01/stage/linuxx64_12201_gsm.zip
 mkdir -p $ORACLE_HOME/gsm
 cd $ORACLE_HOME/gsm
 
-echo "begin gds installer `date` >> $logfile
+echo "begin gds installer `date` ">> $logfile
 ./runInstaller -ignorePrereq -waitforcompletion -silent                        \
     -responseFile ${ORACLE_HOME}/gsm/response/gsm_install.rsp               \
     UNIX_GROUP_NAME=oinstall                                                   \
@@ -289,7 +289,7 @@ echo "begin gds installer `date` >> $logfile
     SECURITY_UPDATES_VIA_MYORACLESUPPORT=false                                 \
     DECLINE_SECURITY_UPDATES=true >2&>1 >> $logfile
 
-echo "end gds installer `date`>> $logfile
+echo "end gds installer `date`">> $logfile
 sudo  $ORACLE_HOME/root.sh
 
 export ORACLE_BASE=/u01/app/oracle
