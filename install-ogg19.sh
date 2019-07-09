@@ -206,3 +206,9 @@ curl -v -u   oggadmin:Welcome1 \
 #cd $OGG_HOME
 
 #adminclient connect  https://shard1.sub06291314360.oggma.oraclevcn.com:9001 DEPLOYMENT  oggma_first as oggadmin password Welcome1
+end=`date +%s`
+echo Execution time was `expr $end - $start` seconds. >> $logfile
+total_time=`expr $end - $start`
+minutes=$((total_time / 60))
+seconds=$((total_time % 60))
+echo "Script completed in $minutes minutes and $seconds seconds" >> $logfile
