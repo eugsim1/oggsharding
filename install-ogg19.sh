@@ -72,8 +72,9 @@ if [[ $server == "sharddirector" ]]
   orapki wallet create -wallet  $WALLET_DIR/root_ca -pwd Welcome1  -auto_login >> $logfile
   orapki wallet add -wallet $WALLET_DIR/root_ca -dn "CN=RootCA" -keysize 2048 -self_signed -validity 7300 -pwd Welcome1 -sign_alg sha256 >> $logfile
   orapki wallet export -wallet $WALLET_DIR/root_ca  -dn "CN=RootCA" -cert $WALLET_DIR/rootCA_Cert.pem -pwd Welcome1 >> $logfile
+  orapki wallet display -wallet $WALLET_DIR/ -pwd Welcome1   >> $logfile
   tar -cvf wallet_dir.tar wallet_dir >> $logfile
-  ssh shard1 'mkdir -p /u01/app/oracle/admin'
+  ssh shard1 'mkdir -p /u01/app/oracle/admin' >> $logfile
   #ssh shard2 'mkdir -p /u01/app/oracle/admin'
   #ssh shard3 'mkdir -p /u01/app/oracle/admin'
   scp wallet_dir.tar shard1:/u01/app/oracle/admin    >> $logfile
