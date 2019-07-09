@@ -1,4 +1,6 @@
-
+serverFQDN=`hostname -f` 
+server=$(echo $serverFQDN | sed 's/\..*//')
+echo $server
 
 
 echo "test deployment "  
