@@ -113,8 +113,10 @@ OGG_VAR_HOME=/u01/app/ogg/oggma_first/var
 export OGG_HOME OGG_ETC_HOME OGG_VAR_HOME
 
 ### kill all previous ogg sessions on this server
+echo " before oggma install " >> $logfile
 env | grep ORA >> $logfile
 env | grep TNS >> $logfile
+env | grep PATH >> $logfile
 ### create a new oggma deployement from scratch
 for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
 
@@ -135,13 +137,15 @@ cd $OGG_BIN
 unzip -oq /u01/stage/191001_fbo_ggs_Linux_x64_services_shiphome.zip
 cd fbo_ggs_Linux_x64_services_shiphome/Disk1
 
-echo "begin install oggma software " >> $logfile
+echo "begin install oggma software `date`" >> $logfile
 
 ./runInstaller -ignorePrereq -waitforcompletion -silent                        \
     -responseFile /u01/app/ogg/oggbin/fbo_ggs_Linux_x64_services_shiphome/Disk1/response/oggcore.rsp               \
     UNIX_GROUP_NAME=oinstall                                                   \
     INVENTORY_LOCATION=${ORA_INVENTORY}                                        \
 	INSTALL_OPTION=ORA19c   SOFTWARE_LOCATION=${OGG_BASE}/oggma > 2&>1 >> $logfile
+	
+echo "end install oggma `date` >> $logfile	
 	
 which java  >> $logfile
 which orapki >> $logfile
@@ -150,11 +154,19 @@ which orapki >> $logfile
 #### configure databases
 echo "netca config" >> $logfile
 netca -silent -responseFile $ORACLE_HOME/assistants/netca/netca.rsp > 2&>1 >> $logfile
+
+echo "listener content" >> $logfile
+cat $TNS_ADMIN\listener.ora >> $logfile
+echo `lsnrctl status` >> $logfile
+
 sudo rm -rf /etc/oratab
 sudo touch /etc/oratab
 sudo chmod ugo+rw /etc/oratab
 sudo chown oracle:oinstall /etc/oratab
- serverDB=`echo $server | cut -c 1-12`
+serverDB=`echo $server | cut -c 1-12`
+
+echo "before db server creation $serverDB" >> $logfile
+
 if [[ $server != "sharddirector" ]]
 then 
 dbca -silent -createDatabase                                                   \
@@ -203,11 +215,11 @@ fi
 
 
 #### install shardcate database
-	
 ### install the catalog database
 
 if [[ $server == "sharddirector" ]]
 then
+echo " shardirector create shardcat database" >> $logfile
 dbca -silent -createDatabase                                                   \
      -templateName General_Purpose.dbc                                         \
      -gdbname shardcat -sid  shardcat -responseFile NO_VALUE         \
@@ -222,7 +234,7 @@ dbca -silent -createDatabase                                                   \
      -datafileDestination "${DATA_DIR}"                                        \
      -redoLogFileSize 50                                                       \
      -emConfiguration NONE                                                     \
-     -ignorePreReqs 2&>1 >> $logfile	
+     -ignorePreReqs >2&>1 >> $logfile	
 
 export ORACLE_SID=shardcat
 sqlplus / as sysdba<<EOF
@@ -264,6 +276,7 @@ unzip -oq /u01/stage/V982067-01.zip
 mkdir -p $ORACLE_HOME/gsm
 cd $ORACLE_HOME/gsm
 
+echo "begin gds installer `date` >> $logfile
 ./runInstaller -ignorePrereq -waitforcompletion -silent                        \
     -responseFile ${ORACLE_HOME}/gsm/response/gsm_install.rsp               \
     UNIX_GROUP_NAME=oinstall                                                   \
@@ -273,7 +286,8 @@ cd $ORACLE_HOME/gsm
     ORACLE_BASE=${ORACLE_BASE}                                                 \
     SECURITY_UPDATES_VIA_MYORACLESUPPORT=false                                 \
     DECLINE_SECURITY_UPDATES=true >2&>1 >> $logfile
-    
+
+echo "end gds installer `date`>> $logfile
 sudo  $ORACLE_HOME/root.sh
 
 export ORACLE_BASE=/u01/app/oracle
