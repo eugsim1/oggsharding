@@ -158,7 +158,7 @@ echo "netca config" >> $logfile
 netca -silent -responseFile $ORACLE_HOME/assistants/netca/netca.rsp > 2&>1 >> $logfile
 
 echo "listener content" >> $logfile
-cat $TNS_ADMIN\listener.ora >> $logfile
+cat $TNS_ADMIN/listener.ora >> $logfile
 echo `lsnrctl status` >> $logfile
 echo "               ">> $logfile
 sudo rm -rf /etc/oratab
@@ -167,7 +167,7 @@ sudo chmod ugo+rw /etc/oratab
 sudo chown oracle:oinstall /etc/oratab
 serverDB=`echo $server | cut -c 1-12`
 
-echo "before db server creation $serverDB" >> $logfile
+echo "before db server creation $serverDB `date`" >> $logfile
 
 if [[ $server != "sharddirector" ]]
 then 
@@ -221,7 +221,7 @@ fi
 
 if [[ $server == "sharddirector" ]]
 then
-echo " shardirector create shardcat database" >> $logfile
+echo "shardirector create shardcat database" >> $logfile
 dbca -silent -createDatabase                                                   \
      -templateName General_Purpose.dbc                                         \
      -gdbname shardcat -sid  shardcat -responseFile NO_VALUE         \
@@ -271,7 +271,7 @@ mkdir -p $ORACLE_HOME
 cd $ORACLE_HOME
 unzip -oq /u01/stage/V982067-01.zip
 
-echo "install gds " >> $logfile
+echo "install gds on server $server" >> $logfile
 
 
 unzip -oq /u01/stage/linuxx64_12201_gsm.zip
@@ -297,6 +297,10 @@ export ORACLE_HOME=/u01/app/oracle/product/19.0.0/gsmhome_1
 export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
 export PATH=$ORACLE_HOME/bin:$PATH
 export ORA_INVENTORY=/u01/app/oraInventory
+
+echo "change settings for gds configuration" >> $logfile
+env | grep ORA >> $logfile
+env | grep PATH >> $logfile
 
 
 gdsctl delete catalog  -force
