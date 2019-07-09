@@ -69,13 +69,13 @@ cd $ORACLE_BASE/admin
 if [[ $server == "sharddirector" ]]
  then 
   echo "create Root certificates on $server"  >> $logfile
-  orapki wallet create -wallet  $WALLET_DIR/root_ca -pwd Welcome1  -auto_login
-  orapki wallet add -wallet $WALLET_DIR/root_ca -dn "CN=RootCA" -keysize 2048 -self_signed -validity 7300 -pwd Welcome1 -sign_alg sha256
-  orapki wallet export -wallet $WALLET_DIR/root_ca  -dn "CN=RootCA" -cert $WALLET_DIR/rootCA_Cert.pem -pwd Welcome1
-  tar -cvf wallet_dir.tar wallet_dir
-  scp wallet_dir.tar shard1:/$ORACLE_BASE/admin/  > 2&1  >> $logfile
-  scp wallet_dir.tar shard2:/$ORACLE_BASE/admin/  > 2&1  >> $logfile
-  scp wallet_dir.tar shard3:/$ORACLE_BASE/admin/  > 2&1  >> $logfile
+  orapki wallet create -wallet  $WALLET_DIR/root_ca -pwd Welcome1  -auto_login >> $logfile
+  orapki wallet add -wallet $WALLET_DIR/root_ca -dn "CN=RootCA" -keysize 2048 -self_signed -validity 7300 -pwd Welcome1 -sign_alg sha256 >> $logfile
+  orapki wallet export -wallet $WALLET_DIR/root_ca  -dn "CN=RootCA" -cert $WALLET_DIR/rootCA_Cert.pem -pwd Welcome1 >> $logfile
+  tar -cvf wallet_dir.tar wallet_dir >> $logfile
+  scp wallet_dir.tar shard1:/$ORACLE_BASE/admin/    >> $logfile
+  scp wallet_dir.tar shard2:/$ORACLE_BASE/admin/    >> $logfile
+  scp wallet_dir.tar shard3:/$ORACLE_BASE/admin/    >> $logfile
  else
   cd $ORACLE_BASE/admin
   echo "deploy tar file from server"
@@ -91,7 +91,7 @@ orapki cert create -wallet $WALLET_DIR/root_ca -request $WALLET_DIR/${server}_re
 orapki wallet add -wallet $WALLET_DIR/$server -trusted_cert -cert $WALLET_DIR/rootCA_Cert.pem -pwd Welcome1
 orapki wallet add -wallet $WALLET_DIR/$server -user_cert  -cert $WALLET_DIR/${server}_Cert.pem -pwd Welcome1
 ### display wallet configuration
-orapki wallet display -wallet $WALLET_DIR/$server -pwd Welcome1 > 2&1  >> $logfile
+orapki wallet display -wallet $WALLET_DIR/$server -pwd Welcome1   >> $logfile
 read -p "Press enter to continue"
 ### create a distribution server user certificate
 orapki wallet create -wallet $WALLET_DIR/dist_client -auto_login -pwd Welcome1
@@ -101,7 +101,7 @@ orapki cert create -wallet $WALLET_DIR/root_ca -request $WALLET_DIR/dist_client_
 orapki wallet add -wallet $WALLET_DIR/dist_client -trusted_cert -cert $WALLET_DIR/rootCA_Cert.pem -pwd Welcome1
 orapki wallet add -wallet $WALLET_DIR/dist_client -user_cert  -cert $WALLET_DIR/dist_client_Cert.pem -pwd Welcome1
 ### display wallet configuration
-orapki wallet display -wallet  $WALLET_DIR/dist_client -pwd Welcome1 > 2&1  >> $logfile
+orapki wallet display -wallet  $WALLET_DIR/dist_client -pwd Welcome1  >> $logfile
 
 
 ## create wallets
@@ -113,7 +113,7 @@ orapki wallet export -wallet $SHARDIND_WALLET_DIR -pwd Welcome1  -dn "CN=dist_cl
 orapki cert create -wallet $WALLET_DIR/root_ca -request $SHARDIND_WALLET_DIR/dist_client.pem -cert $SHARDIND_WALLET_DIR/dist_client_Cert.pem -serial_num 40 -validity 365 -pwd Welcome1
 orapki wallet add -wallet $SHARDIND_WALLET_DIR -trusted_cert -cert $WALLET_DIR/rootCA_Cert.pem -pwd Welcome1
 orapki wallet add -wallet $SHARDIND_WALLET_DIR -user_cert  -cert $SHARDIND_WALLET_DIR/dist_client_Cert.pem -pwd Welcome1
-orapki wallet display -wallet $SHARDIND_WALLET_DIR > 2&1  >> $logfile
+orapki wallet display -wallet $SHARDIND_WALLET_DIR   >> $logfile
 
 
 ### deployement of the oggma 
@@ -156,7 +156,7 @@ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
 
 export ORACLE_SID=$server
 
-sqlplus / as sysdba <<EOF > 2&1  >> $logfile
+sqlplus / as sysdba <<EOF >> $logfile
 drop user ggadmin cascade;
 @$OGG_HOME/lib/sql/sharding/orashard_setup.sql A $server:9000/oggma_first Welcome1 $server:1521/$server;
 EOF
@@ -170,13 +170,13 @@ export CURL_CA_BUNDLE=$WALLET_DIR/rootCA_Cert.pem
 curl -v -u   oggadmin:Welcome1 \
 -H "Content-Type: application/json"   \
 -H "Accept: application/json"   \
--X GET https://$server:9000/services/v2/deployments | jq > 2&1  >> $logfile
+-X GET https://$server:9000/services/v2/deployments | jq   >> $logfile
 
 
 curl -v -u   oggadmin:Welcome1 \
 -H "Content-Type: application/json"   \
 -H "Accept: application/json"   \
--X GET https://$server:9000/services/v2/deployments/oggma_first | jq > 2&1  >> $logfile
+-X GET https://$server:9000/services/v2/deployments/oggma_first | jq    >> $logfile
 #cd $OGG_HOME
 
 #adminclient connect  https://shard1.sub06291314360.oggma.oraclevcn.com:9001 DEPLOYMENT  oggma_first as oggadmin password Welcome1
