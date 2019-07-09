@@ -82,8 +82,8 @@ if [[ $server == "sharddirector" ]]
   #scp wallet_dir.tar shard3:/u01/app/oracle/admin    >> $logfile
  else
   cd $ORACLE_BASE/admin
-  echo "deploy tar file from server"
-  tar -xvf wallet_dir.tar > 2&1  >> $logfile
+  echo "deploy tar file from server"  >> $logfile
+  tar -xvf wallet_dir.tar   >> $logfile
 fi
 
 
