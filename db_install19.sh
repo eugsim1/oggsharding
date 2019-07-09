@@ -239,7 +239,7 @@ dbca -silent -createDatabase                                                   \
      -ignorePreReqs >2&>1 >> $logfile	
 
 export ORACLE_SID=shardcat
-sqlplus / as sysdba<<EOF
+sqlplus / as sysdba<<EOF > 2&1>> $logfile
 alter system set db_create_file_dest='/u01/app/oracle/oradata' scope=both;
 alter system set open_links=16 scope=spfile;
 alter system set open_links_per_instance=16 scope=spfile;
@@ -266,15 +266,12 @@ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
 export PATH=$ORACLE_HOME/bin:$PATH
 export ORA_INVENTORY=/u01/app/oraInventory
 
+echo "install gds on server $server" >> $logfile
+
 rm -rf $ORACLE_HOME
 mkdir -p $ORACLE_HOME
 cd $ORACLE_HOME
 unzip -oq /u01/stage/V982067-01.zip
-
-echo "install gds on server $server" >> $logfile
-
-
-unzip -oq /u01/stage/linuxx64_12201_gsm.zip
 mkdir -p $ORACLE_HOME/gsm
 cd $ORACLE_HOME/gsm
 
