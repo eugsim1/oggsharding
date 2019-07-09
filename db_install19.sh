@@ -4,6 +4,10 @@ serverFQDN=`hostname -f`
 server=$(echo $serverFQDN | sed 's/\..*//')
 echo $server
 
+start=`date +%s`
+logfile=/tmp/debug_log_$start.log
+echo "start " $start > $logfile
+
 
 export ORACLE_HOSTNAME=$server
 export ORACLE_BASE=/u01/app/oracle
@@ -18,8 +22,9 @@ export CLASSPATH=$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
 export TNS_ADMIN=$ORACLE_HOME/network/admin
 
 ### kill all previous ogg sessions on this server
-env | grep ORA
-env | grep TNS
+env | grep ORA >> $logfile
+env | grep TNS >> $logfile
+
 ### create a new oggma deployement from scratch
 for pid in $(ps -ef | grep "oggma" | awk '{print $2}'); do kill -9 $pid; done
 
@@ -39,7 +44,7 @@ mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
 
 
 
-cat /u01/app/oraInventory/ContentsXML/inventory.xml > /home/oracle/ansible.log
+cat /u01/app/oraInventory/ContentsXML/inventory.xml >> $logfile
 
 cd $ORACLE_BASE
 rm -rf *
@@ -50,12 +55,14 @@ rm -rf ../ogg ..//ogg19
 mkdir -p $DATA_DIR
 mkdir -p $ORACLE_HOME
 
-echo `ls -la  $ORACLE_BASE` 1>>  /home/oracle/ansible.log
+echo "start unzip V982063-01.zip" `date +%s` >> $logfile
 
 cd $ORACLE_HOME
 unzip -oq /u01/stage/V982063-01.zip
 
-
+echo "end unzip V982063-01.zip" `date +%s` >> $logfile
+echo " ********************************"   >> $logfile
+echo " start install db software"          >> $logfile
 
 # Install DB software Silent mode.
 ./runInstaller -ignorePrereq -waitforcompletion -silent                        \
@@ -74,7 +81,7 @@ unzip -oq /u01/stage/V982063-01.zip
     oracle.install.db.OSKMDBA_GROUP=dba                                        \
     oracle.install.db.OSRACDBA_GROUP=dba                                       \
     SECURITY_UPDATES_VIA_MYORACLESUPPORT=false                                 \
-    DECLINE_SECURITY_UPDATES=true 
+    DECLINE_SECURITY_UPDATES=true 2&>1 >> $logfile
     
 sudo   /u01/app/oraInventory/orainstRoot.sh
 sudo  /u01/app/oracle/product/19.0.0/dbhome_1/root.sh
@@ -104,8 +111,8 @@ OGG_VAR_HOME=/u01/app/ogg/oggma_first/var
 export OGG_HOME OGG_ETC_HOME OGG_VAR_HOME
 
 ### kill all previous ogg sessions on this server
-env | grep ORA
-env | grep TNS
+env | grep ORA >> $logfile
+env | grep TNS >> $logfile
 ### create a new oggma deployement from scratch
 for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
 
@@ -114,30 +121,33 @@ for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
 sed '/oggma/d' /u01/app/oraInventory/ContentsXML/inventory.xml | sed '/OUIPlaceHolderDummyHome/d' > loc.xml
 mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
 echo "oggma pre install" >> /home/oracle/ansible.log
-cat /u01/app/oraInventory/ContentsXML/inventory.xml  >> /home/oracle/ansible.log
+cat /u01/app/oraInventory/ContentsXML/inventory.xml  >> $logfile
 
 ### install ogg ma core software
 rm -rf $OGG_BASE
 mkdir -p $OGG_BASE
 mkdir -p $OGG_BIN
 export OGG_HOME=/u01/app/ogg
-echo $OGG_HOME
+echo $OGG_HOME >> $logfile
 cd $OGG_BIN
 unzip -oq /u01/stage/191001_fbo_ggs_Linux_x64_services_shiphome.zip
 cd fbo_ggs_Linux_x64_services_shiphome/Disk1
+
+echo "begin install oggma software " >> $logfile
 
 ./runInstaller -ignorePrereq -waitforcompletion -silent                        \
     -responseFile /u01/app/ogg/oggbin/fbo_ggs_Linux_x64_services_shiphome/Disk1/response/oggcore.rsp               \
     UNIX_GROUP_NAME=oinstall                                                   \
     INVENTORY_LOCATION=${ORA_INVENTORY}                                        \
-	INSTALL_OPTION=ORA19c   SOFTWARE_LOCATION=${OGG_BASE}/oggma
+	INSTALL_OPTION=ORA19c   SOFTWARE_LOCATION=${OGG_BASE}/oggma 2&>1 >> $logfile
 	
-which java  >> /home/oracle/ansible.log
-which orapki >> /home/oracle/ansible.log
+which java  >> $logfile
+which orapki >> $logfile
 
 	
 #### configure databases
-netca -silent -responseFile $ORACLE_HOME/assistants/netca/netca.rsp
+echo "netca config" >> $logfile
+netca -silent -responseFile $ORACLE_HOME/assistants/netca/netca.rsp 2&>1 >> $logfile
 
 sudo rm -rf /etc/oratab
 sudo touch /etc/oratab
@@ -163,7 +173,7 @@ dbca -silent -createDatabase                                                   \
      -datafileDestination "${DATA_DIR}"                                        \
      -redoLogFileSize 50                                                       \
      -emConfiguration NONE                                                   \
-     -ignorePreReqs 
+     -ignorePreReqs 2&>1 >> $logfile
      
  ###    	 -customScripts init.sql \
  
@@ -186,6 +196,8 @@ select * from v\$sgainfo;
 alter system set streams_pool_size = '1200M' scope = both;
 select current_size from v\$sga_dynamic_components where component = 'streams pool';
 EOF
+
+
 fi
 
 
@@ -209,7 +221,7 @@ dbca -silent -createDatabase                                                   \
      -datafileDestination "${DATA_DIR}"                                        \
      -redoLogFileSize 50                                                       \
      -emConfiguration NONE                                                     \
-     -ignorePreReqs	
+     -ignorePreReqs 2&>1 >> $logfile	
 
 export ORACLE_SID=shardcat
 sqlplus / as sysdba<<EOF
@@ -244,6 +256,8 @@ mkdir -p $ORACLE_HOME
 cd $ORACLE_HOME
 unzip -oq /u01/stage/V982067-01.zip
 
+"echo install gds " >> $logfile
+
 
 #unzip -oq /u01/stage/linuxx64_12201_gsm.zip
 mkdir -p $ORACLE_HOME/gsm
@@ -257,7 +271,7 @@ cd $ORACLE_HOME/gsm
     ORACLE_HOME=${ORACLE_HOME}                                                 \
     ORACLE_BASE=${ORACLE_BASE}                                                 \
     SECURITY_UPDATES_VIA_MYORACLESUPPORT=false                                 \
-    DECLINE_SECURITY_UPDATES=true 
+    DECLINE_SECURITY_UPDATES=true 2&>1 >> $logfile
     
 sudo  $ORACLE_HOME/root.sh
 
