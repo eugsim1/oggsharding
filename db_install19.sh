@@ -6,7 +6,7 @@ echo $server
 
 start=`date +%s`
 logfile=/tmp/debug_log_$start.log
-echo "start " $start > $logfile
+echo "start " `date +%m-%d-%Y-%H-%M-%S` > $logfile
 
 
 export ORACLE_HOSTNAME=$server
@@ -24,6 +24,8 @@ export TNS_ADMIN=$ORACLE_HOME/network/admin
 ### kill all previous ogg sessions on this server
 env | grep ORA >> $logfile
 env | grep TNS >> $logfile
+env | grep PATH >> $logfile
+echo "         ">> $logfile
 
 ### create a new oggma deployement from scratch
 for pid in $(ps -ef | grep "oggma" | awk '{print $2}'); do kill -9 $pid; done
@@ -81,7 +83,7 @@ echo " start install db software"          >> $logfile
     oracle.install.db.OSKMDBA_GROUP=dba                                        \
     oracle.install.db.OSRACDBA_GROUP=dba                                       \
     SECURITY_UPDATES_VIA_MYORACLESUPPORT=false                                 \
-    DECLINE_SECURITY_UPDATES=true 2&>1 >> $logfile
+    DECLINE_SECURITY_UPDATES=true > 2&>1 >> $logfile
     
 sudo   /u01/app/oraInventory/orainstRoot.sh
 sudo  /u01/app/oracle/product/19.0.0/dbhome_1/root.sh
@@ -104,7 +106,7 @@ export OGG_BASE=/u01/app/ogg
 export OGG_HOME=/u01/app/ogg/oggma
 export OGG_BIN=/u01/app/ogg/oggbin
 export JAVA_HOME=$OGG_HOME/jdk
-export PATH=$OGG_HOME/bin:$OGG_HOME/jdk/bin:$PATH
+export PATH=$OGG_HOME/bin:$OGG_HOME/jdk/bin:$ORACLE_HOME/bin:$PATH
 
 OGG_ETC_HOME=/u01/app/ogg/oggma_first/etc
 OGG_VAR_HOME=/u01/app/ogg/oggma_first/var
@@ -121,7 +123,7 @@ for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
 sed '/oggma/d' /u01/app/oraInventory/ContentsXML/inventory.xml | sed '/OUIPlaceHolderDummyHome/d' > loc.xml
 mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
 echo "oggma pre install" >> /home/oracle/ansible.log
-cat /u01/app/oraInventory/ContentsXML/inventory.xml  >> $logfile
+cat /u01/app/oraInventory/ContentsXML/inventory.xml   >> $logfile
 
 ### install ogg ma core software
 rm -rf $OGG_BASE
@@ -139,7 +141,7 @@ echo "begin install oggma software " >> $logfile
     -responseFile /u01/app/ogg/oggbin/fbo_ggs_Linux_x64_services_shiphome/Disk1/response/oggcore.rsp               \
     UNIX_GROUP_NAME=oinstall                                                   \
     INVENTORY_LOCATION=${ORA_INVENTORY}                                        \
-	INSTALL_OPTION=ORA19c   SOFTWARE_LOCATION=${OGG_BASE}/oggma 2&>1 >> $logfile
+	INSTALL_OPTION=ORA19c   SOFTWARE_LOCATION=${OGG_BASE}/oggma > 2&>1 >> $logfile
 	
 which java  >> $logfile
 which orapki >> $logfile
@@ -147,8 +149,7 @@ which orapki >> $logfile
 	
 #### configure databases
 echo "netca config" >> $logfile
-netca -silent -responseFile $ORACLE_HOME/assistants/netca/netca.rsp 2&>1 >> $logfile
-
+netca -silent -responseFile $ORACLE_HOME/assistants/netca/netca.rsp > 2&>1 >> $logfile
 sudo rm -rf /etc/oratab
 sudo touch /etc/oratab
 sudo chmod ugo+rw /etc/oratab
@@ -173,7 +174,7 @@ dbca -silent -createDatabase                                                   \
      -datafileDestination "${DATA_DIR}"                                        \
      -redoLogFileSize 50                                                       \
      -emConfiguration NONE                                                   \
-     -ignorePreReqs 2&>1 >> $logfile
+     -ignorePreReqs  > 2&>1 >> $logfile
      
  ###    	 -customScripts init.sql \
  
@@ -271,7 +272,7 @@ cd $ORACLE_HOME/gsm
     ORACLE_HOME=${ORACLE_HOME}                                                 \
     ORACLE_BASE=${ORACLE_BASE}                                                 \
     SECURITY_UPDATES_VIA_MYORACLESUPPORT=false                                 \
-    DECLINE_SECURITY_UPDATES=true 2&>1 >> $logfile
+    DECLINE_SECURITY_UPDATES=true >2&>1 >> $logfile
     
 sudo  $ORACLE_HOME/root.sh
 
