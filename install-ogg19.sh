@@ -92,10 +92,10 @@ if [[ $server != "sharddirector" ]]
 ## create server certificate for the host short name not FQDN
 orapki wallet create -wallet $WALLET_DIR/$server -auto_login -pwd Welcome1
 orapki wallet add -wallet $WALLET_DIR/$server -dn "CN=$server" -keysize 2048 -pwd Welcome1
-orapki wallet export -wallet $WALLET_DIR/$server -pwd Welcome1  -dn "CN=$server"  -request $WALLET_DIR/$server_req.pem
-orapki cert create -wallet $WALLET_DIR/root_ca -request $WALLET_DIR/$server_req.pem -cert $WALLET_DIR/$server_Cert.pem -serial_num 20 -validity 365 -pwd Welcome1  -sign_alg sha256
+orapki wallet export -wallet $WALLET_DIR/$server -pwd Welcome1  -dn "CN=$server"  -request $WALLET_DIR/${server}_req.pem
+orapki cert create -wallet $WALLET_DIR/root_ca -request $WALLET_DIR/${server}_req.pem -cert $WALLET_DIR/${server}_Cert.pem -serial_num 20 -validity 365 -pwd Welcome1  -sign_alg sha256
 orapki wallet add -wallet $WALLET_DIR/$server -trusted_cert -cert $WALLET_DIR/rootCA_Cert.pem -pwd Welcome1
-orapki wallet add -wallet $WALLET_DIR/$server -user_cert  -cert $WALLET_DIR/$server_Cert.pem -pwd Welcome1
+orapki wallet add -wallet $WALLET_DIR/$server -user_cert  -cert $WALLET_DIR/${server}_Cert.pem -pwd Welcome1
 ### display wallet configuration
 orapki wallet display -wallet $WALLET_DIR/$server -pwd Welcome1   >> $logfile
 read -p "Press enter to continue"
