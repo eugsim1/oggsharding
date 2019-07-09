@@ -3,7 +3,9 @@
 serverFQDN=`hostname -f` 
 server=$(echo $serverFQDN | sed 's/\..*//')
 echo $server
-
+start=`date +%s`
+logfile=/tmp/debug_log_$start.log
+echo "start " `date +%m-%d-%Y-%H-%M-%S` "=>" $server > $logfile
 
 ### oraenv for ora 19 version
 export ORACLE_HOSTNAME=$server
@@ -38,8 +40,8 @@ OGG_VAR_HOME=/u01/app/ogg/oggma_first/var
 export OGG_HOME OGG_ETC_HOME OGG_VAR_HOME
 
 ### kill all previous ogg sessions on this server
-env | grep ORA
-env | grep TNS
+env | grep ORA >> $logifile
+env | grep TNS >> $logifile
 ### create a new oggma deployement from scratch
 for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
 
@@ -71,14 +73,20 @@ which orapki
 '
 
 ## create certificates for the oma deployement
-
+echo "create certificates "  >> $logifile
 serverFQDN=`hostname -f` 
 server=$(echo $serverFQDN | sed 's/\..*//')
 echo $server
 
+echo "server short name =>" $server >> $logifile
+
 
 export WALLET_DIR=$ORACLE_BASE/admin/wallet_dir
 export SHARDIND_WALLET_DIR=$ORACLE_BASE/admin/ggshd_wallet
+
+echo " wallets "  >> $logifile
+env | grep WALLET  >> $logifile
+
 cd $ORACLE_BASE/admin	
 rm -rf 	$WALLET_DIR $SHARDIND_WALLET_DIR
 mkdir -p $ORACLE_BASE/admin/ggshd_wallet
@@ -88,16 +96,17 @@ cd $ORACLE_BASE/admin
 
 if [[ $server == "sharddirector" ]]
  then 
+  echo "create Root certificates on $server"  >> $logifile
   orapki wallet create -wallet  $WALLET_DIR/root_ca -pwd Welcome1  -auto_login
   orapki wallet add -wallet $WALLET_DIR/root_ca -dn "CN=RootCA" -keysize 2048 -self_signed -validity 7300 -pwd Welcome1 -sign_alg sha256
   orapki wallet export -wallet $WALLET_DIR/root_ca  -dn "CN=RootCA" -cert $WALLET_DIR/rootCA_Cert.pem -pwd Welcome1
   tar -cvf wallet_dir.tar wallet_dir
-  scp wallet_dir.tar shard1:/$ORACLE_BASE/admin/
-  scp wallet_dir.tar shard2:/$ORACLE_BASE/admin/
-  scp wallet_dir.tar shard3:/$ORACLE_BASE/admin/
+  scp wallet_dir.tar shard1:/$ORACLE_BASE/admin/  > 2&1  >> $logifile
+  scp wallet_dir.tar shard2:/$ORACLE_BASE/admin/  > 2&1  >> $logifile
+  scp wallet_dir.tar shard3:/$ORACLE_BASE/admin/  > 2&1  >> $logifile
  else
   cd $ORACLE_BASE/admin
-  tar -xvf wallet_dir.tar
+  tar -xvf wallet_dir.tar > 2&1  >> $logifile
 fi
 
 
@@ -109,7 +118,7 @@ orapki cert create -wallet $WALLET_DIR/root_ca -request $WALLET_DIR/${server}_re
 orapki wallet add -wallet $WALLET_DIR/$server -trusted_cert -cert $WALLET_DIR/rootCA_Cert.pem -pwd Welcome1
 orapki wallet add -wallet $WALLET_DIR/$server -user_cert  -cert $WALLET_DIR/${server}_Cert.pem -pwd Welcome1
 ### display wallet configuration
-orapki wallet display -wallet $WALLET_DIR/$server -pwd Welcome1
+orapki wallet display -wallet $WALLET_DIR/$server -pwd Welcome1 > 2&1  >> $logifile
 ### create a distribution server user certificate
 orapki wallet create -wallet $WALLET_DIR/dist_client -auto_login -pwd Welcome1
 orapki wallet add -wallet $WALLET_DIR/dist_client -dn "CN=$server" -keysize 2048 -pwd Welcome1
@@ -118,7 +127,7 @@ orapki cert create -wallet $WALLET_DIR/root_ca -request $WALLET_DIR/dist_client_
 orapki wallet add -wallet $WALLET_DIR/dist_client -trusted_cert -cert $WALLET_DIR/rootCA_Cert.pem -pwd Welcome1
 orapki wallet add -wallet $WALLET_DIR/dist_client -user_cert  -cert $WALLET_DIR/dist_client_Cert.pem -pwd Welcome1
 ### display wallet configuration
-orapki wallet display -wallet  $WALLET_DIR/dist_client -pwd Welcome1
+orapki wallet display -wallet  $WALLET_DIR/dist_client -pwd Welcome1 > 2&1  >> $logifile
 
 
 ## create wallets
@@ -130,7 +139,7 @@ orapki wallet export -wallet $SHARDIND_WALLET_DIR -pwd Welcome1  -dn "CN=dist_cl
 orapki cert create -wallet $WALLET_DIR/root_ca -request $SHARDIND_WALLET_DIR/dist_client.pem -cert $SHARDIND_WALLET_DIR/dist_client_Cert.pem -serial_num 40 -validity 365 -pwd Welcome1
 orapki wallet add -wallet $SHARDIND_WALLET_DIR -trusted_cert -cert $WALLET_DIR/rootCA_Cert.pem -pwd Welcome1
 orapki wallet add -wallet $SHARDIND_WALLET_DIR -user_cert  -cert $SHARDIND_WALLET_DIR/dist_client_Cert.pem -pwd Welcome1
-orapki wallet display -wallet $SHARDIND_WALLET_DIR
+orapki wallet display -wallet $SHARDIND_WALLET_DIR > 2&1  >> $logifile
 
 
 ### deployement of the oggma 
@@ -140,13 +149,15 @@ export OGG_HOME=/u01/app/ogg/oggma
 export OGG_BIN=/u01/app/ogg/oggbin
 serverFQDN=`hostname -f` 
 server=$(echo $serverFQDN | sed 's/\..*//')
-echo $server
+echo $server   >> $logifile
 for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
 rm -rf /u01/app/ogg/oggma_first /u01/app/ogg/oggma_deploy
 
+echo "begin oggma deployement " >> $logifile
 cd ${OGG_HOME}/bin
 ./oggca.sh -silent -responseFile  ~/scripts/oggsharding/oggca19.rsp HOST_SERVICEMANAGER=$server \
-SERVER_WALLET=$WALLET_DIR/$server CLIENT_WALLET=$WALLET_DIR/dist_client
+SERVER_WALLET=$WALLET_DIR/$server CLIENT_WALLET=$WALLET_DIR/dist_client > 2&1  >> $logifile
+echo "end oggma deployement"  >> $logifile
 
 
 
@@ -171,12 +182,13 @@ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
 
 export ORACLE_SID=$server
 
-sqlplus / as sysdba <<EOF
+sqlplus / as sysdba <<EOF > 2&1  >> $logifile
 drop user ggadmin cascade;
 @$OGG_HOME/lib/sql/sharding/orashard_setup.sql A $server:9000/oggma_first Welcome1 $server:1521/$server;
 EOF
 
 
+echo "test deployment " >> $logifile
 export WALLET_DIR=$ORACLE_BASE/admin/wallet_dir
 export CURL_CA_BUNDLE=$WALLET_DIR/root_ca
 export CURL_CA_BUNDLE=$WALLET_DIR/rootCA_Cert.pem
@@ -184,13 +196,13 @@ export CURL_CA_BUNDLE=$WALLET_DIR/rootCA_Cert.pem
 curl -v -u   oggadmin:Welcome1 \
 -H "Content-Type: application/json"   \
 -H "Accept: application/json"   \
--X GET https://$server:9000/services/v2/deployments | jq
+-X GET https://$server:9000/services/v2/deployments | jq > 2&1  >> $logifile
 
 
 curl -v -u   oggadmin:Welcome1 \
 -H "Content-Type: application/json"   \
 -H "Accept: application/json"   \
--X GET https://$server:9000/services/v2/deployments/oggma_first | jq
+-X GET https://$server:9000/services/v2/deployments/oggma_first | jq > 2&1  >> $logifile
 #cd $OGG_HOME
 
 #adminclient connect  https://shard1.sub06291314360.oggma.oraclevcn.com:9001 DEPLOYMENT  oggma_first as oggadmin password Welcome1
