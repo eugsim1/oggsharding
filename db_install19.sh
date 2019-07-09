@@ -117,6 +117,7 @@ echo " before oggma install " >> $logfile
 env | grep ORA >> $logfile
 env | grep TNS >> $logfile
 env | grep PATH >> $logfile
+echo "                     " >>$logfile
 ### create a new oggma deployement from scratch
 for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
 
@@ -126,18 +127,19 @@ sed '/oggma/d' /u01/app/oraInventory/ContentsXML/inventory.xml | sed '/OUIPlaceH
 mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
 echo "oggma pre install" >> /home/oracle/ansible.log
 cat /u01/app/oraInventory/ContentsXML/inventory.xml   >> $logfile
+echo "          " >> $logfile
 
 ### install ogg ma core software
 rm -rf $OGG_BASE
 mkdir -p $OGG_BASE
 mkdir -p $OGG_BIN
 export OGG_HOME=/u01/app/ogg
-echo $OGG_HOME >> $logfile
+echo "$OGG_HOME" $OGG_HOME >> $logfile
 cd $OGG_BIN
 unzip -oq /u01/stage/191001_fbo_ggs_Linux_x64_services_shiphome.zip
 cd fbo_ggs_Linux_x64_services_shiphome/Disk1
 
-echo "begin install oggma software `date`" >> $logfile
+echo "begin install oggma software=> `date`" >> $logfile
 
 ./runInstaller -ignorePrereq -waitforcompletion -silent                        \
     -responseFile /u01/app/ogg/oggbin/fbo_ggs_Linux_x64_services_shiphome/Disk1/response/oggcore.rsp               \
@@ -145,7 +147,7 @@ echo "begin install oggma software `date`" >> $logfile
     INVENTORY_LOCATION=${ORA_INVENTORY}                                        \
 	INSTALL_OPTION=ORA19c   SOFTWARE_LOCATION=${OGG_BASE}/oggma > 2&>1 >> $logfile
 	
-echo "end install oggma `date` >> $logfile	
+echo "end install oggma=> `date`" >> $logfile	
 	
 which java  >> $logfile
 which orapki >> $logfile
@@ -158,7 +160,7 @@ netca -silent -responseFile $ORACLE_HOME/assistants/netca/netca.rsp > 2&>1 >> $l
 echo "listener content" >> $logfile
 cat $TNS_ADMIN\listener.ora >> $logfile
 echo `lsnrctl status` >> $logfile
-
+echo "               ">> $logfile
 sudo rm -rf /etc/oratab
 sudo touch /etc/oratab
 sudo chmod ugo+rw /etc/oratab
@@ -269,10 +271,10 @@ mkdir -p $ORACLE_HOME
 cd $ORACLE_HOME
 unzip -oq /u01/stage/V982067-01.zip
 
-"echo install gds " >> $logfile
+echo "install gds " >> $logfile
 
 
-#unzip -oq /u01/stage/linuxx64_12201_gsm.zip
+unzip -oq /u01/stage/linuxx64_12201_gsm.zip
 mkdir -p $ORACLE_HOME/gsm
 cd $ORACLE_HOME/gsm
 
