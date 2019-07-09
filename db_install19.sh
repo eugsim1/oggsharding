@@ -314,3 +314,7 @@ fi
 
 end=`date +%s`
 echo Execution time was `expr $end - $start` seconds. >> $logfile
+total_time=`expr $end - $start`
+minutes=$((total_time / 60))
+seconds=$((total_time % 60))
+echo "Script completed in $minutes minutes and $seconds seconds" >> $logfile
