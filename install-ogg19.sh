@@ -84,6 +84,8 @@ fi
 
 
 ## create server certificate for the host short name not FQDN
+if [[ $server != "sharddirector" ]]
+ then 
 orapki wallet create -wallet $WALLET_DIR/$server -auto_login -pwd Welcome1
 orapki wallet add -wallet $WALLET_DIR/$server -dn "CN=$server" -keysize 2048 -pwd Welcome1
 orapki wallet export -wallet $WALLET_DIR/$server -pwd Welcome1  -dn "CN=$server"  -request $WALLET_DIR/${server}_req.pem
@@ -180,6 +182,8 @@ curl -v -u   oggadmin:Welcome1 \
 #cd $OGG_HOME
 
 #adminclient connect  https://shard1.sub06291314360.oggma.oraclevcn.com:9001 DEPLOYMENT  oggma_first as oggadmin password Welcome1
+fi
+
 end=`date +%s`
 echo Execution time was `expr $end - $start` seconds. >> $logfile
 total_time=`expr $end - $start`
