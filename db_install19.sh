@@ -302,6 +302,9 @@ echo "change settings for gds configuration" >> $logfile
 env | grep ORA >> $logfile
 env | grep PATH >> $logfile
 
+echo "           ">> $logfile
+echo "begin gdsctl commands" >> $logfile
+
 
 gdsctl delete catalog  -force
 gdsctl create shardcatalog -database sharddirector:1521/shardcat -user mysdbadmin/Welcome1 -sdb cust_sdb -region region1, region2 -agent_port 7777 -agent_password Welcome1 -sharding system -force
@@ -309,5 +312,6 @@ gdsctl add gsm -gsm sharddirector1  -pwd Welcome1 -listener 1522 -catalog shardd
 gdsctl start gsm -gsm sharddirector1
 gdsctl add credential -credential mycredential -osaccount oracle -ospassword Toula1412#
 
+echo "end gdsctl command" >> $logfile
 fi
 
