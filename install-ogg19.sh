@@ -135,8 +135,8 @@ rm -rf /u01/app/ogg/oggma_first /u01/app/ogg/oggma_deploy
 
 echo "begin oggma deployement " >> $logfile
 cd ${OGG_HOME}/bin
-./oggca.sh -silent -responseFile  ~/scripts/oggca19.rsp HOST_SERVICEMANAGER=$server ADMINISTRATOR_PASSWORD=Welcome1\
-SERVER_WALLET=$WALLET_DIR/$server CLIENT_WALLET=$WALLET_DIR/dist_client > 2&1  >> $logfile
+./oggca.sh -silent -responseFile  ~/scripts/oggca19.rsp HOST_SERVICEMANAGER=$server ADMINISTRATOR_PASSWORD=Welcome1 ADMINISTRATOR_USER=oggadmin \
+SERVER_WALLET=$WALLET_DIR/$server CLIENT_WALLET=$WALLET_DIR/dist_client   >> $logfile
 echo "end oggma deployement"  >> $logfile
 
 
