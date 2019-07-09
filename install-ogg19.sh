@@ -135,7 +135,7 @@ rm -rf /u01/app/ogg/oggma_first /u01/app/ogg/oggma_deploy
 
 echo "begin oggma deployement " >> $logfile
 cd ${OGG_HOME}/bin
-./oggca.sh -silent -responseFile  ~/scripts/oggsharding/oggca19.rsp HOST_SERVICEMANAGER=$server \
+./oggca.sh -silent -responseFile  ~/scripts/oggca19.rsp HOST_SERVICEMANAGER=$server ADMINISTRATOR_PASSWORD=Welcome1\
 SERVER_WALLET=$WALLET_DIR/$server CLIENT_WALLET=$WALLET_DIR/dist_client > 2&1  >> $logfile
 echo "end oggma deployement"  >> $logfile
 
@@ -162,7 +162,7 @@ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
 
 export ORACLE_SID=$server
 
-sqlplus / as sysdba <<EOF >> $logfile
+sqlplus / as sysdba <<EOF 
 drop user ggadmin cascade;
 @$OGG_HOME/lib/sql/sharding/orashard_setup.sql A $server:9000/oggma_first Welcome1 $server:1521/$server;
 EOF
