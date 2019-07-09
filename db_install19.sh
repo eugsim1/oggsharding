@@ -312,3 +312,5 @@ gdsctl add credential -credential mycredential -osaccount oracle -ospassword Tou
 echo "end gdsctl command" >> $logfile
 fi
 
+end=`date +%s`
+echo Execution time was `expr $end - $start` seconds. >> $logfile
