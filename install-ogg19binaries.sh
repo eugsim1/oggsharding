@@ -9,7 +9,7 @@ start=`date +%s`
 logfile=/tmp/debug_log_ogg.log
 echo "start " `date +%m-%d-%Y-%H-%M-%S` > $logfile
 
-export logfile=/tmp/debug_log_oggbinaries.log
+export logfile
 export ORACLE_HOSTNAME=$server
 export ORACLE_BASE=/u01/app/oracle
 export ORACLE_SID=$server
