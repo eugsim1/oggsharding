@@ -35,7 +35,7 @@ unzip -oq /u01/stage/LINUX.X64_180000_gsm.zip
 
 
 echo "begin gds installer `date` ">> $logfile
-./runInstaller -ignorePrereq -waitforcompletion -silent                        \
+/tmp/gms/runInstaller -ignorePrereq -waitforcompletion -silent                        \
     -responseFile /tmp/gsm/response/gsm_install.rsp               \
     UNIX_GROUP_NAME=oinstall                                                   \
     INVENTORY_LOCATION=${ORA_INVENTORY}                                        \
