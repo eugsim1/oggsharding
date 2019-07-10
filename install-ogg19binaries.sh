@@ -32,7 +32,8 @@ OGG_VAR_HOME=/u01/app/ogg/oggma_first/var
 export OGG_HOME OGG_ETC_HOME OGG_VAR_HOME
 
 ### kill all previous ogg sessions on this server
-echo " before oggma install " >> $logfile
+echo "before oggma install " >> $logfile
+echo "                     " >> $logfile
 env | grep ORA >> $logfile
 env | grep TNS >> $logfile
 env | grep PATH >> $logfile
@@ -42,9 +43,9 @@ for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
 
 # remove previous entries from the inventory file
 
-sed '/oggma/d' /u01/app/oraInventory/ContentsXML/inventory.xml | sed '/OUIPlaceHolderDummyHome/d' > loc.xml
-mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
-echo "oggma pre install" >> /home/oracle/ansible.log
+sed '/oggma/d' /u01/app/oraInventory/ContentsXML/inventory.xml | sed '/OUIPlaceHolderDummyHome/d' > /tmp/loc.xml
+mv tmp/loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
+echo "oggma pre install" >> $logfile
 cat /u01/app/oraInventory/ContentsXML/inventory.xml   >> $logfile
 echo "          " >> $logfile
 
