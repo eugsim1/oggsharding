@@ -6,7 +6,7 @@ server=$(echo $serverFQDN | sed 's/\..*//')
 echo $server
 
 start=`date +%s`
-logfile=/tmp/debug_log_ogg_$start.log
+logfile=/tmp/debug_log_ogg.log
 echo "start " `date +%m-%d-%Y-%H-%M-%S` > $logfile
 
 export logfile=/tmp/debug_log_oggbinaries.log
