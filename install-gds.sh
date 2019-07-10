@@ -35,7 +35,7 @@ unzip -oq /u01/stage/LINUX.X64_180000_gsm.zip
 
 
 echo "begin gds installer `date` ">> $logfile
-/tmp/gms/runInstaller -ignorePrereq -waitforcompletion -silent                        \
+/tmp/gsm/runInstaller -ignorePrereq -waitforcompletion -silent                        \
     -responseFile /tmp/gsm/response/gsm_install.rsp               \
     UNIX_GROUP_NAME=oinstall                                                   \
     INVENTORY_LOCATION=${ORA_INVENTORY}                                        \
@@ -43,7 +43,7 @@ echo "begin gds installer `date` ">> $logfile
     ORACLE_HOME=${ORACLE_HOME}                                                 \
     ORACLE_BASE=${ORACLE_BASE}                                                 \
     SECURITY_UPDATES_VIA_MYORACLESUPPORT=false                                 \
-    DECLINE_SECURITY_UPDATES=true >2&>1 >> $logfile
+    DECLINE_SECURITY_UPDATES=true > 2&>1 >> $logfile
 
 echo "end gds installer `date`">> $logfile
 sudo  $ORACLE_HOME/root.sh
