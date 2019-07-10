@@ -1,9 +1,9 @@
 !#/bin/bash
-serverFQDN=`hostname -f` 
+serverFQDN=`hostname -f`
 server=$(echo $serverFQDN | sed 's/\..*//')
 echo $server
 start=`date +%s`
-logfile=/tmp/debug_log_ogg.log
+logfile=/tmp/debug_log_configomma.log
 echo "start " `date +%m-%d-%Y-%H-%M-%S` "=>" $server > $logfile
 
 ### oraenv for ora 19 version
@@ -39,14 +39,14 @@ echo "         ">> $logfile
 for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
 
 
-	
+
 which java >> $logfile
 which orapki >> $logfile
 
 
 ## create certificates for the oma deployement
 echo "create certificates "  >> $logfile
-serverFQDN=`hostname -f` 
+serverFQDN=`hostname -f`
 server=$(echo $serverFQDN | sed 's/\..*//')
 echo $server
 
@@ -67,7 +67,7 @@ cd $ORACLE_BASE/admin
 
 
 if [[ $server == "sharddirector" ]]
- then 
+ then
   echo "create Root certificates on $server"  >> $logfile
   orapki wallet create -wallet  $WALLET_DIR/root_ca -pwd Welcome1  -auto_login >> $logfile
   orapki wallet add -wallet $WALLET_DIR/root_ca -dn "CN=RootCA" -keysize 2048 -self_signed -validity 7300 -pwd Welcome1 -sign_alg sha256 >> $logfile
@@ -75,10 +75,10 @@ if [[ $server == "sharddirector" ]]
   orapki wallet display -wallet $WALLET_DIR/root_ca -pwd Welcome1   >> $logfile
   tar -cvf wallet_dir.tar wallet_dir >> $logfile
   ssh shard1 'mkdir -p /u01/app/oracle/admin' >> $logfile
-  #ssh shard2 'mkdir -p /u01/app/oracle/admin'
+  ssh shard2 'mkdir -p /u01/app/oracle/admin' >> $logfile
   #ssh shard3 'mkdir -p /u01/app/oracle/admin'
   scp wallet_dir.tar shard1:/u01/app/oracle/admin    >> $logfile
-  #scp wallet_dir.tar shard2:/u01/app/oracle/admin    >> $logfile
+  scp wallet_dir.tar shard2:/u01/app/oracle/admin    >> $logfile
   #scp wallet_dir.tar shard3:/u01/app/oracle/admin    >> $logfile
  else
   cd $ORACLE_BASE/admin
@@ -88,7 +88,7 @@ fi
 
 
 if [[ $server != "sharddirector" ]]
- then 
+ then
 ## create server certificate for the host short name not FQDN
 orapki wallet create -wallet $WALLET_DIR/$server -auto_login -pwd Welcome1
 orapki wallet add -wallet $WALLET_DIR/$server -dn "CN=$server" -keysize 2048 -pwd Welcome1
@@ -122,12 +122,12 @@ orapki wallet add -wallet $SHARDIND_WALLET_DIR -user_cert  -cert $SHARDIND_WALLE
 orapki wallet display -wallet $SHARDIND_WALLET_DIR   >> $logfile
 
 
-### deployement of the oggma 
+### deployement of the oggma
 
 export OGG_BASE=/u01/app/ogg
 export OGG_HOME=/u01/app/ogg/oggma
 export OGG_BIN=/u01/app/ogg/oggbin
-serverFQDN=`hostname -f` 
+serverFQDN=`hostname -f`
 server=$(echo $serverFQDN | sed 's/\..*//')
 echo $server   >> $logfile
 for pid in $(ps -ef | grep "oggma" | awk '{print $2}');  do kill -9 $pid; done
@@ -165,7 +165,7 @@ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
 
 export ORACLE_SID=$server
 
-sqlplus / as sysdba <<EOF 
+sqlplus / as sysdba <<EOF
 drop user ggadmin cascade;
 @$OGG_HOME/lib/sql/sharding/orashard_setup.sql A $server:9000/oggma_first Welcome1 $server:1521/$server;
 EOF
