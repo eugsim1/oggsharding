@@ -28,7 +28,7 @@ env | grep PATH >> $logfile
 echo "         ">> $logfile
 
 ### create a new oggma deployement from scratch
-for pid in $(ps -ef | grep "oggma" | awk '{print $2}'); do kill -9 $pid; done
+#for pid in $(ps -ef | grep "oggma" | awk '{print $2}'); do kill -9 $pid; done
 
 ## kill all db sessions on this server
 for pid in $(ps -ef | grep "pmon" | awk '{print $2}'); do kill -9 $pid; done
@@ -48,11 +48,11 @@ mv loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
 
 cat /u01/app/oraInventory/ContentsXML/inventory.xml >> $logfile
 
-cd $ORACLE_BASE
+cd $ORACLE_BASE #/u01/app/oracle
 rm -rf *
-rm -rf $DATA_DIR
-rm -rf $ORACLE_HOME
-rm -rf ../ogg ..//ogg19
+# rm -rf $DATA_DIR #/u01/app/oracle/oradata19
+# rm -rf $ORACLE_HOME
+# rm -rf ../ogg ..//ogg19
 ## install oracle software
 mkdir -p $DATA_DIR
 mkdir -p $ORACLE_HOME

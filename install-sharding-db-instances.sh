@@ -19,6 +19,10 @@ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
 export CLASSPATH=$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
 export TNS_ADMIN=$ORACLE_HOME/network/admin
 
+env | grep ORA >> $logfile
+env | grep PATH >> $logfile
+
+
 #### configure databases
 echo "netca config" >> $logfile
 netca -silent -responseFile $ORACLE_HOME/assistants/netca/netca.rsp > 2&>1 >> $logfile

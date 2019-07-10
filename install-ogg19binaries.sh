@@ -49,9 +49,9 @@ cat /u01/app/oraInventory/ContentsXML/inventory.xml   >> $logfile
 echo "          " >> $logfile
 
 ### install ogg ma core software
-rm -rf $OGG_BASE
+rm -rf $OGG_BASE # /u01/app/ogg
 mkdir -p $OGG_BASE
-mkdir -p $OGG_BIN
+mkdir -p $OGG_BIN # /u01/app/ogg/oggbin
 export OGG_HOME=/u01/app/ogg
 echo "$OGG_HOME" $OGG_HOME >> $logfile
 cd $OGG_BIN
