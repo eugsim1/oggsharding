@@ -22,7 +22,7 @@ echo "install gds on server $server" >> $logfile
 rm -rf $ORACLE_HOME
 mkdir -p $ORACLE_HOME
 cd $ORACLE_HOME
-unzip -oq /u01/stage/V982067-01.zip
+unzip -oq /u01/stage/LINUX.X64_180000_gsm.zip
 mkdir -p $ORACLE_HOME/gsm
 cd $ORACLE_HOME/gsm
 
