@@ -19,6 +19,14 @@ then
 
 echo "install gds on server $server" >> $logfile
 
+sed '/gsmhome/d' /u01/app/oraInventory/ContentsXML/inventory.xml | sed '/OUIPlaceHolderDummyHome/d' > /tmp/loc.xml
+mv /tmp/loc.xml /u01/app/oraInventory/ContentsXML/inventory.xml
+cat /u01/app/oraInventory/ContentsXML/inventory.xml >> $logfile
+echo "                   " >> $logfile
+echo "gds pre install" >> $logfile
+cat /u01/app/oraInventory/ContentsXML/inventory.xml   >> $logfile
+echo "          " >> $logfile
+
 rm -rf $ORACLE_HOME
 mkdir -p $ORACLE_HOME
 cd $ORACLE_HOME
