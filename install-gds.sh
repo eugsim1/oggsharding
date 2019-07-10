@@ -5,7 +5,7 @@ server=$(echo $serverFQDN | sed 's/\..*//')
 echo $server
 
 start=`date +%s`
-logfile=/tmp/debug_log_gds_$start.log
+logfile=/tmp/debug_log_gds.log
 echo "start " `date +%m-%d-%Y-%H-%M-%S` > $logfile
 
 export ORACLE_BASE=/u01/app/oracle

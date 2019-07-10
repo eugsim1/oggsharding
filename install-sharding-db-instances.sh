@@ -3,7 +3,7 @@ server=$(echo $serverFQDN | sed 's/\..*//')
 echo $server
 
 start=`date +%s`
-logfile=/tmp/debug_log_inst_$start.log
+logfile=/tmp/debug_log_inst.log
 echo "start " `date +%m-%d-%Y-%H-%M-%S` > $logfile
 
 
@@ -22,6 +22,9 @@ export TNS_ADMIN=$ORACLE_HOME/network/admin
 env | grep ORA >> $logfile
 env | grep PATH >> $logfile
 
+### create a new oggma deployement from scratch
+for pid in $(ps -ef | grep "pmon" | awk '{print $2}');  do kill -9 $pid; done
+rm -rf  $DATA_DIR/*
 
 #### configure databases
 echo "netca config" >> $logfile
