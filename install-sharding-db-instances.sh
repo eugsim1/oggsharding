@@ -35,6 +35,9 @@ sudo rm -rf /etc/oratab
 sudo touch /etc/oratab
 sudo chmod ugo+rw /etc/oratab
 sudo chown oracle:oinstall /etc/oratab
+echo 'ls -la /etc/oratab' >> $logfile
+
+
 serverDB=`echo $server | cut -c 1-12`
 
 echo "before db server creation $serverDB `date`" >> $logfile
