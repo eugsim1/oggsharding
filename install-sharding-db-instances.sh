@@ -24,7 +24,18 @@ env | grep PATH >> $logfile
 
 ### create a new oggma deployement from scratch
 for pid in $(ps -ef | grep "pmon" | awk '{print $2}');  do kill -9 $pid; done
+
+for pid in $(ps -ef | grep "lsnr" | awk '{print $2}');  do kill -9 $pid; done
+rm -rf $TNS_ADMIN/listener.ora
+
 rm -rf  $DATA_DIR/*
+
+sudo rm -rf /etc/oratab
+sudo touch /etc/oratab
+sudo chmod ugo+rw /etc/oratab
+sudo chown oracle:oinstall /etc/oratab
+echo `ls -la /etc/oratab` >> $logfile
+
 
 #### configure databases
 echo "netca config" >> $logfile
@@ -34,11 +45,7 @@ echo "listener content" >> $logfile
 cat $TNS_ADMIN/listener.ora >> $logfile
 echo `lsnrctl status` >> $logfile
 echo "               ">> $logfile
-sudo rm -rf /etc/oratab
-sudo touch /etc/oratab
-sudo chmod ugo+rw /etc/oratab
-sudo chown oracle:oinstall /etc/oratab
-echo `ls -la /etc/oratab` >> $logfile
+
 
 
 serverDB=`echo $server | cut -c 1-12`
