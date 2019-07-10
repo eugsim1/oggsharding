@@ -29,14 +29,14 @@ echo "          " >> $logfile
 
 rm -rf $ORACLE_HOME
 mkdir -p $ORACLE_HOME
-cd $ORACLE_HOME
+
+cd /tmp
 unzip -oq /u01/stage/LINUX.X64_180000_gsm.zip
-mkdir -p $ORACLE_HOME/gsm
-cd $ORACLE_HOME/gsm
+
 
 echo "begin gds installer `date` ">> $logfile
 ./runInstaller -ignorePrereq -waitforcompletion -silent                        \
-    -responseFile ${ORACLE_HOME}/gsm/response/gsm_install.rsp               \
+    -responseFile /tmp/gsm/response/gsm_install.rsp               \
     UNIX_GROUP_NAME=oinstall                                                   \
     INVENTORY_LOCATION=${ORA_INVENTORY}                                        \
     SELECTED_LANGUAGES=en,en_GB                                                \
