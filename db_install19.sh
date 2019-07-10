@@ -58,12 +58,12 @@ mkdir -p $DATA_DIR
 mkdir -p $ORACLE_HOME
 mkdir -p /u01/app/oracle/admin/$server/adump
 
-echo "start unzip V982063-01.zip" `date +%s` >> $logfile
+echo "start unzip LINUX.X64_193000_db_home.zip" `date +%s` >> $logfile
 
 cd $ORACLE_HOME
-unzip -oq /u01/stage/V982063-01.zip
+unzip -oq /u01/stage/LINUX.X64_193000_db_home.zip
 
-echo "end unzip V982063-01.zip" `date +%s` >> $logfile
+echo "end unzip LINUX.X64_193000_db_home.zip" `date +%s` >> $logfile
 echo " ********************************"   >> $logfile
 echo " start install db software"          >> $logfile
 
