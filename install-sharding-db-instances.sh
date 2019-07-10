@@ -99,6 +99,7 @@ if [[ $server == "sharddirector" ]]
 then
 mkdir -p  /u01/app/oracle/admin/shardcat/adump
 echo "shardirector create shardcat database" >> $logfile
+echo `whoami` >> $logfile
 dbca -silent -createDatabase                                                   \
    -templateName General_Purpose.dbc                                         \
    -gdbname shardcat -sid  shardcat -responseFile NO_VALUE         \
