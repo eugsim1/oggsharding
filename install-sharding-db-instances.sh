@@ -108,7 +108,7 @@ mkdir -p  /u01/app/oracle/admin/shardcat/adump
 echo "shardirector create shardcat database" >> $logfile
 echo `whoami` >> $logfile
 
-$ORACLE_HOME/bin/dbca -silent -createDatabase                                                   \
+$ORACLE_HOME/bin/dbca -silent -createDatabase                               \
    -templateName General_Purpose.dbc                                         \
    -gdbname shardcat -sid  shardcat -responseFile NO_VALUE         \
    -characterSet AL32UTF8                                                    \
@@ -122,7 +122,7 @@ $ORACLE_HOME/bin/dbca -silent -createDatabase                                   
    -datafileDestination "${DATA_DIR}"                                        \
    -redoLogFileSize 50                                                       \
    -emConfiguration NONE                                                     \
-   -ignorePreReqs >2&>1 >> $logfile
+   -ignorePreReqs  >> $logfile
 
 export ORACLE_SID=shardcat
 sqlplus / as sysdba<<EOF > 2&1>> $logfile
