@@ -1,9 +1,14 @@
 #https://docs.oracle.com/en/database/oracle/oracle-database/18/shard/sharding-deployment.html#GUID-96ABB404-844C-457E-9C10-2D5C352D3928
 #https://docs.oracle.com/en/database/oracle/oracle-database/12.2/gsmug/gdsctl-reference.html#GUID-8C21C4B2-0270-4CED-8C7D-5E3574457324
 
-serverFQDN=`hostname -f` 
+serverFQDN=`hostname -f`
 server=$(echo $serverFQDN | sed 's/\..*//')
 echo $server
+
+start=`date +%s`
+logfile=/tmp/debug_log_db_$start.log
+echo "start " `date +%m-%d-%Y-%H-%M-%S` > $logfile
+
 
 ##### ora18.env sharddirector
 export ORACLE_HOSTNAME=$server
@@ -50,9 +55,9 @@ echo "install DB software in silent more"
     oracle.install.db.OSRACDBA_GROUP=dba                                       \
     SECURITY_UPDATES_VIA_MYORACLESUPPORT=false                                 \
     DECLINE_SECURITY_UPDATES=true
-	
+
 sudo   /u01/app/oraInventory/orainstRoot.sh
-sudo  /u01/app/oracle/product/18.0.0/dbhome_1/root.sh	
+sudo  /u01/app/oracle/product/18.0.0/dbhome_1/root.sh
 
 echo "delete previous db if exists"
 dbca -silent -deleteDatabase -sourceDB shardcat -sysDBAUserName sys -sysDBAPassword SysPassword1
@@ -89,7 +94,7 @@ dbca -silent -createDatabase                                                   \
 	 -createListener LISTENER:1521  \
 	 -customScripts /home/oracle/scripts/init.sql \
      -ignorePreReqs
-	
+
 ### install the catalog database
 echo "install catalog database"
 dbca -silent -createDatabase                                                   \
@@ -107,12 +112,12 @@ dbca -silent -createDatabase                                                   \
      -redoLogFileSize 50                                                       \
      -emConfiguration NONE                                                     \
      -customScripts /home/oracle/scripts/initshardcat.sql  \
-     -ignorePreReqs	
-	
-	
+     -ignorePreReqs
+
+
 ### configuration of the catalog
-## this is done with initshardcat.sql	
-#install the gds services 	
+## this is done with initshardcat.sql
+#install the gds services
 
 
 env |grep ORA
@@ -142,10 +147,14 @@ cd $ORACLE_HOME/gsm
     DECLINE_SECURITY_UPDATES=true
 ##
 # /u01/app/oracle/product/19.0.0/gsmhome_1/install/response/gsm_2019-06-03_05-51-33AM.rsp
-#	
+#
 
 
 sudo  $ORACLE_HOME/root.sh
 
-### install oggma
-
+end=`date +%s`
+echo Execution time was `expr $end - $start` seconds. >> $logfile
+total_time=`expr $end - $start`
+minutes=$((total_time / 60))
+seconds=$((total_time % 60))
+echo "Script completed in $minutes minutes and $seconds seconds" >> $logfile

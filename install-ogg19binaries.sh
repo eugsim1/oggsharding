@@ -1,5 +1,14 @@
 ### install ogg ma software
 ### oraenv for ora 19 version
+
+serverFQDN=`hostname -f`
+server=$(echo $serverFQDN | sed 's/\..*//')
+echo $server
+
+start=`date +%s`
+logfile=/tmp/debug_log_ogg_$start.log
+echo "start " `date +%m-%d-%Y-%H-%M-%S` > $logfile
+
 export logfile=/tmp/debug_log_oggbinaries.log
 export ORACLE_HOSTNAME=$server
 export ORACLE_BASE=/u01/app/oracle
@@ -61,3 +70,11 @@ echo "end install oggma=> `date`" >> $logfile
 
 which java  >> $logfile
 which orapki >> $logfile
+
+
+end=`date +%s`
+echo Execution time was `expr $end - $start` seconds. >> $logfile
+total_time=`expr $end - $start`
+minutes=$((total_time / 60))
+seconds=$((total_time % 60))
+echo "Script completed in $minutes minutes and $seconds seconds" >> $logfile
