@@ -179,13 +179,13 @@ export CURL_CA_BUNDLE=$WALLET_DIR/rootCA_Cert.pem
 curl -v -u   oggadmin:Welcome1 \
 -H "Content-Type: application/json"   \
 -H "Accept: application/json"   \
--X GET https://$server:9000/services/v2/deployments | jq   >> $logfile
+-X GET https://$server:9000/services/v2/deployments | jq  '.' >> /tmp/oggma-dep.txt
 
 
 curl -v -u   oggadmin:Welcome1 \
 -H "Content-Type: application/json"   \
 -H "Accept: application/json"   \
--X GET https://$server:9000/services/v2/deployments/oggma_first | jq    >> $logfile
+-X GET https://$server:9000/services/v2/deployments/oggma_first | jq '.'   >> /tmp/oggma-dep.txt
 #cd $OGG_HOME
 
 
