@@ -11,7 +11,7 @@ echo "start " `date +%m-%d-%Y-%H-%M-%S` > $logfile
 ##### ora18.env sharddirector
 export ORACLE_HOSTNAME=$server
 export ORACLE_BASE=/u01/app/oracle
-export ORACLE_HOME=$ORACLE_BASE/product/18.0.0/dbhome_1
+export ORACLE_HOME=$ORACLE_BASE/product/19.0.0/dbhome_1
 export ORA_INVENTORY=/u01/app/oraInventory
 ##export ORACLE_SID=shardcat
 export DATA_DIR=/u01/app/oracle/oradata18
@@ -24,4 +24,4 @@ lsnrctl status
 
 cat /etc/oratab
 
-ps -eaf | grep pmon 
+ps -eaf | grep pmon
