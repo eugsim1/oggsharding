@@ -28,7 +28,7 @@ rm -rf  $DATA_DIR/*
 
 #### configure databases
 echo "netca config" >> $logfile
-netca -silent -responseFile $ORACLE_HOME/assistants/netca/netca.rsp > 2&>1 >> $logfile
+netca -silent -responseFile $ORACLE_HOME/assistants/netca/netca.rsp  >> $logfile
 
 echo "listener content" >> $logfile
 cat $TNS_ADMIN/listener.ora >> $logfile
@@ -38,7 +38,7 @@ sudo rm -rf /etc/oratab
 sudo touch /etc/oratab
 sudo chmod ugo+rw /etc/oratab
 sudo chown oracle:oinstall /etc/oratab
-echo 'ls -la /etc/oratab' >> $logfile
+echo `ls -la /etc/oratab` >> $logfile
 
 
 serverDB=`echo $server | cut -c 1-12`
