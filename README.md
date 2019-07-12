@@ -1,1 +1,3 @@
 # oggsharding
+
+only some scripts 19xxx are used for the oracle goldengate microservices ...
